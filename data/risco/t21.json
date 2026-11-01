@@ -1,0 +1,19 @@
+{
+  "condicao": "t21",
+  "nome": "Trissomia 21 (síndrome de Down)",
+  "fonte": "Morris & Wald, J Med Screen 2007;14(1):5-7",
+  "fonteUrl": "https://doi.org/10.1258/096914107780154549",
+  "reproduzidaEm": "BORN Ontario, Prevalence of Chromosome Differences",
+  "referencia": "nascido_vivo",
+  "gestacao": "unica",
+  "idade": "data_prevista_parto",
+  "atualizadoEm": "2026-11-01",
+  "conferido": false,
+  "valores": {
+    "21": 1470, "22": 1452, "23": 1430, "24": 1400, "25": 1362,
+    "26": 1315, "27": 1255, "28": 1182, "29": 1095, "30": 994,
+    "31": 881, "32": 759, "33": 634, "34": 513, "35": 403,
+    "36": 308, "37": 231, "38": 172, "39": 129, "40": 98,
+    "41": 76, "42": 61, "43": 50, "44": 43, "45": 38
+  }
+}

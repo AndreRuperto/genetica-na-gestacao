@@ -1,0 +1,13 @@
+---
+import Base from '../layouts/Base.astro';
+import { Calculadora } from '../islands/Calculadora';
+import t21 from '@dados/risco/t21.json';
+import { tabelaSchema } from '../lib/tabela';
+
+const tabela = tabelaSchema.parse(t21);
+---
+<Base titulo="O que a idade muda na gestação" descricao="Veja, em 1.000 bebês, como a idade materna muda a chance de síndrome de Down, com fonte para cada número.">
+  <h1>O que a idade muda na gestação</h1>
+  <p>Informe a idade da mãe na data prevista do parto. Nada do que você digitar sai do seu navegador.</p>
+  <Calculadora client:load tabela={tabela} />
+</Base>

@@ -5,7 +5,7 @@ export const tabelaSchema = z
     condicao: z.string(),
     nome: z.string(),
     fonte: z.string().min(1),
-    fonteUrl: z.string().url(),
+    fonteUrl: z.url(),
     reproduzidaEm: z.string().optional(),
     referencia: z.literal('nascido_vivo'),
     gestacao: z.literal('unica'),

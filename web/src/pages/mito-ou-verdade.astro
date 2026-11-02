@@ -1,0 +1,19 @@
+---
+import Base from '../layouts/Base.astro';
+import { getCollection, render } from 'astro:content';
+const mitos = (await getCollection('mitos')).sort((a, b) => a.data.ordem - b.data.ordem);
+const itens = await Promise.all(mitos.map(async (m) => ({ m, Conteudo: (await render(m)).Content })));
+---
+<Base titulo="Mito ou verdade" descricao="Afirmações comuns sobre genética e gravidez, conferidas com fonte.">
+  <h1>Mito ou verdade</h1>
+  {itens.map(({ m, Conteudo }) => (
+    <article id={m.id} class="card-mito">
+      <h2><a href={`#${m.id}`}>{m.data.afirmacao}</a></h2>
+      <p class="selo">{m.data.veredito}</p>
+      <Conteudo />
+      <p class="fonte">Fonte: {m.data.fontes.map((f, i) => (
+        <>{i > 0 && ' · '}{f.url ? <a href={f.url}>{f.titulo}</a> : f.titulo}</>
+      ))}</p>
+    </article>
+  ))}
+</Base>

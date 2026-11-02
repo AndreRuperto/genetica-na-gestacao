@@ -1,0 +1,83 @@
+---
+import Base from '../layouts/Base.astro';
+import Revisao from '../components/Revisao.astro';
+import t21 from '@dados/risco/t21.json';
+import { tabelaSchema } from '../lib/tabela';
+import { umEmN, porcentagem } from '../lib/formatar';
+
+const tabela = tabelaSchema.parse(t21);
+const linhas = Object.entries(tabela.valores).map(([idade, n]) => ({ idade, n }));
+const data = new Date(tabela.atualizadoEm + 'T12:00:00').toLocaleDateString('pt-BR');
+// Endereço do repositório público, quando existir.
+const repositorio: string | undefined = undefined;
+---
+<Base titulo="Metodologia" descricao="De onde vêm os números, como são calculados e quais são os limites.">
+  <h1>Metodologia</h1>
+
+  <h2>De onde vêm os números</h2>
+  <table>
+    <thead><tr><th scope="col">Fonte</th><th scope="col">O que usamos</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><a href={tabela.fonteUrl}>{tabela.fonte}</a></td>
+        <td>Risco de trissomia 21 ao nascimento por idade materna, de 21 a 45 anos. É a tabela da calculadora.</td>
+      </tr>
+      <tr>
+        <td>{tabela.reproduzidaEm}</td>
+        <td>Reprodução da tabela de Morris &amp; Wald usada para conferência.</td>
+      </tr>
+      <tr>
+        <td><a href="https://doi.org/10.1002/pd.2403">Savva, Walker &amp; Morris, Prenat Diagn 2010</a></td>
+        <td>Relação das trissomias 18 e 13 com a idade materna, citada nas páginas das síndromes. Ainda não entra na calculadora.</td>
+      </tr>
+      <tr>
+        <td>ACOG Committee Opinions 690 e 691 (2017)</td>
+        <td>Painel genético de portadores.</td>
+      </tr>
+      <tr>
+        <td>Fetal Medicine Foundation e MedlinePlus Genetics</td>
+        <td>Descrição das síndromes e das afirmações de mito ou verdade.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Como calculamos</h2>
+  <ul>
+    <li><strong>Idade inteira:</strong> o valor vem direto da tabela, como "1 em N".</li>
+    <li><strong>Idade com fração</strong> (calculada pelas datas): interpolação linear no logaritmo de N entre as duas idades vizinhas, porque a curva cresce de forma aproximadamente exponencial.</li>
+    <li><strong>Porcentagem:</strong> 100 / N, com duas casas. A chance de não ter é 100 menos esse valor, com uma casa.</li>
+    <li><strong>Grade de 1.000 bebês:</strong> o número de casos destacados é 1.000 / N, arredondado para o inteiro mais próximo.</li>
+    <li>Fora de 21 a 45 anos não mostramos número, para não extrapolar a tabela.</li>
+  </ul>
+
+  <h2>Cuidados ao ler os números</h2>
+  <ul>
+    <li><strong>Nascido vivo, não meio da gestação.</strong> Os valores são de risco ao nascimento. No primeiro e no segundo trimestre o risco é maior, porque parte das gestações com trissomia termina em perda espontânea antes do parto.</li>
+    <li><strong>Idade na data prevista do parto.</strong> É a idade que a tabela usa, não a idade na concepção nem no dia de hoje.</li>
+    <li><strong>FIV e óvulo doado.</strong> O que conta é a idade de quem produziu o óvulo, na data da coleta. Por isso a calculadora troca a pergunta quando o óvulo é doado ou congelado.</li>
+    <li><strong>Gestação única.</strong> A tabela vale para um bebê. Gestações de gêmeos têm valores próprios, que a calculadora ainda não mostra.</li>
+    <li><strong>Por que não usamos o SINASC na calculadora.</strong> O registro brasileiro de nascidos vivos depende de a anomalia ser reconhecida e anotada na declaração de nascimento, o que deixa casos de fora. Ele serve para descrever o Brasil, mas não para estimar o risco individual por idade.</li>
+  </ul>
+
+  <h2>Tabela completa: trissomia 21 ao nascimento</h2>
+  <p class="fonte">
+    Fonte: <a href={tabela.fonteUrl}>{tabela.fonte}</a>, conforme {tabela.reproduzidaEm}. Atualizado em {data}.
+    {tabela.conferido
+      ? ' Valores conferidos na publicação original.'
+      : ' Valores ainda não conferidos na publicação original.'}
+  </p>
+  <table>
+    <thead><tr><th scope="col">Idade</th><th scope="col">Risco</th><th scope="col">%</th></tr></thead>
+    <tbody>{linhas.map((l) => <tr><td>{l.idade}</td><td>{umEmN(l.n)}</td><td>{porcentagem(100 / l.n)}</td></tr>)}</tbody>
+  </table>
+
+  <h2>Revisão</h2>
+  <Revisao atualizadoEm={tabela.atualizadoEm} />
+
+  <h2>Código aberto</h2>
+  <p>
+    {repositorio
+      ? <>O código do site e a tabela de risco estão em <a href={repositorio}>{repositorio}</a>.</>
+      : 'O código do site e a tabela de risco serão publicados em um repositório aberto.'}
+  </p>
+</Base>

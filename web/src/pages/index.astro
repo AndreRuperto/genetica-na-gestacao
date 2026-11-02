@@ -1,16 +1,26 @@
 ---
+import Base from '../layouts/Base.astro';
+import Fonte from '../components/Fonte.astro';
+import t21 from '@dados/risco/t21.json';
+import { umEmN, complemento } from '../lib/formatar';
+const v = t21.valores;
+const destaques = [
+  { valor: umEmN(v['25']), rotulo: 'risco de Down aos 25 anos' },
+  { valor: umEmN(v['35']), rotulo: 'aos 35 anos' },
+  { valor: umEmN(v['40']), rotulo: 'aos 40 anos' },
+  { valor: complemento(100 - 100 / v['45']), rotulo: 'chance de bebê sem Down aos 45' },
+];
 ---
-
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<Base titulo="Genética da Gravidez Explicada" descricao="Como a idade materna afeta o risco de trissomias, com números confiáveis, fontes e visualizações simples.">
+  <h1>Genética da Gravidez Explicada</h1>
+  <p>Como a idade materna muda a chance de alterações cromossômicas, explicado com números confiáveis e fonte para cada um.</p>
+  <ul class="destaques">
+    {destaques.map((d) => <li><strong>{d.valor}</strong><span>{d.rotulo}</span></li>)}
+  </ul>
+  <Fonte titulo="Morris & Wald (2007), risco ao nascimento, gestação única" url={t21.fonteUrl} />
+  <p><a href="/calculadora" class="botao">Veja o que a idade muda</a></p>
+  <nav aria-label="Seções">
+    <a href="/sindromes">Síndromes</a> · <a href="/mito-ou-verdade">Mito ou verdade</a> ·
+    <a href="/painel-genetico">Painel genético</a> · <a href="/metodologia">Metodologia</a>
+  </nav>
+</Base>

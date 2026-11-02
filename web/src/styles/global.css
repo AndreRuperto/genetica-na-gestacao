@@ -24,3 +24,5 @@ main { max-width: var(--largura); margin: 0 auto; padding: 2rem 1rem 4rem; }
 .fonte { font-size: 0.85rem; color: var(--texto-suave); }
 .selo { display: inline-block; font-size: 0.8rem; padding: 0.15rem 0.6rem; border-radius: 999px; background: var(--verde-100); color: var(--verde-900); }
 @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+.grade circle.caso { animation: surgir 0.4s ease-out both; }
+@keyframes surgir { from { opacity: 0; transform: scale(0.3); transform-box: fill-box; transform-origin: center; } }

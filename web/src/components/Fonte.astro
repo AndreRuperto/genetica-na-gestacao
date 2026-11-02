@@ -1,0 +1,5 @@
+---
+interface Props { titulo: string; url?: string }
+const { titulo, url } = Astro.props;
+---
+<span class="fonte">Fonte: {url ? <a href={url} rel="noopener">{titulo}</a> : titulo}</span>

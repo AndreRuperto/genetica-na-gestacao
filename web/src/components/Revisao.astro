@@ -1,0 +1,11 @@
+---
+interface Props { revisadoPor?: { nome: string; credencial: string }; atualizadoEm: string }
+const { revisadoPor, atualizadoEm } = Astro.props;
+const data = new Date(atualizadoEm + 'T12:00:00').toLocaleDateString('pt-BR');
+---
+<p>
+  {revisadoPor
+    ? <span class="selo">Revisado por {revisadoPor.nome}, {revisadoPor.credencial}</span>
+    : <span class="selo">Em revisão</span>}
+  <span class="fonte"> · Atualizado em {data}</span>
+</p>

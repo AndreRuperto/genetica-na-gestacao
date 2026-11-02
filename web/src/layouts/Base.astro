@@ -1,0 +1,32 @@
+---
+import '../styles/global.css';
+interface Props { titulo: string; descricao: string }
+const { titulo, descricao } = Astro.props;
+const nomeSite = 'Genética da Gravidez Explicada';
+---
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{titulo === nomeSite ? nomeSite : `${titulo} · ${nomeSite}`}</title>
+    <meta name="description" content={descricao} />
+    <meta property="og:title" content={titulo} />
+    <meta property="og:description" content={descricao} />
+    <meta property="og:locale" content="pt_BR" />
+  </head>
+  <body>
+    <header>
+      <nav aria-label="Principal">
+        <a href="/">Início</a> · <a href="/calculadora">O que a idade muda</a> ·
+        <a href="/sindromes">Síndromes</a> · <a href="/mito-ou-verdade">Mito ou verdade</a> ·
+        <a href="/painel-genetico">Painel genético</a> · <a href="/metodologia">Metodologia</a>
+      </nav>
+    </header>
+    <main><slot /></main>
+    <footer class="fonte">
+      Conteúdo educativo. Não é diagnóstico nem substitui consulta médica ou aconselhamento
+      genético. · <a href="https://andreruperto.dev">andreruperto.dev</a>
+    </footer>
+  </body>
+</html>

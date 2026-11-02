@@ -1,0 +1,78 @@
+import Base from '../layouts/Base.astro';
+import Fonte from '../components/Fonte.astro';
+
+<Base titulo="Painel genético de portadores" descricao="O que o painel de portadores mostra, o que ele não mostra e o que significa o risco de 25% quando os dois são portadores.">
+
+# Painel genético de portadores
+
+O painel genético de portadores, também chamado de teste de triagem de portadores, analisa o
+DNA do casal, não do bebê. Ele procura variantes em genes ligados a doenças **recessivas**:
+condições que só aparecem quando a pessoa recebe uma cópia alterada do gene de cada um dos pais.
+
+Quem tem uma só cópia alterada é **portador**. Em geral não tem sinal nenhum da condição e
+muitas vezes nem sabe que é portador, porque ninguém na família foi afetado.
+
+## Quando os dois são portadores
+
+Se o casal é portador da **mesma** condição, cada gestação tem:
+
+- 25% de chance de o bebê não herdar nenhuma cópia alterada;
+- 50% de chance de herdar uma cópia e ser portador, como os pais;
+- 25% de chance de herdar as duas cópias e ter a condição.
+
+A chance vale para cada gestação, de forma independente: ter um filho afetado não muda a chance
+do próximo.
+
+<figure>
+  <svg viewBox="0 0 360 300" width="360" style="max-width: 100%" role="img" aria-label="Quadro de herança com pai e mãe portadores (Aa). Das quatro combinações, AA não é portador, Aa e aA são portadores e aa tem a condição: 25% não portador, 50% portador, 25% afetado.">
+    <text x="210" y="24" text-anchor="middle" font-size="14" font-weight="600">Pai portador (Aa)</text>
+    <text x="155" y="54" text-anchor="middle" font-size="16">A</text>
+    <text x="265" y="54" text-anchor="middle" font-size="16">a</text>
+    <text x="24" y="175" text-anchor="middle" font-size="14" font-weight="600" transform="rotate(-90 24 175)">Mãe portadora (Aa)</text>
+    <text x="80" y="120" text-anchor="middle" font-size="16">A</text>
+    <text x="80" y="230" text-anchor="middle" font-size="16">a</text>
+    <rect x="100" y="65" width="110" height="110" fill="#ffffff" stroke="var(--verde-700)" stroke-width="2" />
+    <rect x="210" y="65" width="110" height="110" fill="var(--verde-100)" stroke="var(--verde-700)" stroke-width="2" />
+    <rect x="100" y="175" width="110" height="110" fill="var(--verde-100)" stroke="var(--verde-700)" stroke-width="2" />
+    <rect x="210" y="175" width="110" height="110" fill="var(--laranja)" stroke="var(--verde-700)" stroke-width="2" />
+    <text x="155" y="125" text-anchor="middle" font-size="22" font-weight="700">AA</text>
+    <text x="265" y="125" text-anchor="middle" font-size="22" font-weight="700">Aa</text>
+    <text x="155" y="235" text-anchor="middle" font-size="22" font-weight="700">aA</text>
+    <text x="265" y="235" text-anchor="middle" font-size="22" font-weight="700">aa</text>
+  </svg>
+  <figcaption>25% não portador · 50% portador · 25% afetado</figcaption>
+</figure>
+
+## O que costuma ser oferecido
+
+O Colégio Americano de Obstetras e Ginecologistas (ACOG) considera aceitáveis três estratégias:
+o painel por ancestralidade, focado nas condições mais comuns no grupo de origem da família; o
+painel pan-étnico, igual para todas as pessoas; e o painel expandido, que cobre dezenas ou
+centenas de condições. O ideal é fazer o teste **antes da gravidez**, quando há mais tempo para
+entender o resultado e conversar sobre ele.
+
+Na rotina, as condições mais pesquisadas são a fibrose cística, a atrofia muscular espinhal (AME)
+e as hemoglobinopatias, como a doença falciforme e as talassemias.
+
+## O que o painel não faz
+
+- **Não detecta trissomias**, como a síndrome de Down. Elas não são herdadas dos pais como uma
+  doença recessiva: surgem de um erro na formação do óvulo ou do espermatozoide.
+- **Não mostra o sexo do bebê nem se a gestação é de gêmeos.**
+- **Não analisa "tudo".** Cada painel cobre uma lista definida de genes e condições.
+
+## Como ler o resultado
+
+Se uma pessoa der positivo para uma condição, o próximo passo é testar o parceiro ou a parceira
+para a mesma condição. A chance de 25% só existe quando os dois são portadores da mesma.
+
+Um resultado negativo reduz bastante a chance de ser portador, mas não a zera: nenhum teste
+encontra todas as variantes possíveis. Essa chance que sobra se chama **risco residual** e
+costuma vir descrita no laudo.
+
+Um aconselhamento genético ajuda a interpretar o resultado no contexto da sua família.
+
+<p><Fonte titulo="ACOG Committee Opinion 690: Carrier Screening in the Age of Genomic Medicine (2017)" url="https://www.acog.org/clinical/clinical-guidance/committee-opinion/articles/2017/03/carrier-screening-in-the-age-of-genomic-medicine" /></p>
+<p><Fonte titulo="ACOG Committee Opinion 691: Carrier Screening for Genetic Conditions (2017)" url="https://www.acog.org/clinical/clinical-guidance/committee-opinion/articles/2017/03/carrier-screening-for-genetic-conditions" /></p>
+
+</Base>

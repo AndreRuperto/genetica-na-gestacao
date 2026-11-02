@@ -1,0 +1,22 @@
+---
+import Base from '../../layouts/Base.astro';
+import Revisao from '../../components/Revisao.astro';
+import Fonte from '../../components/Fonte.astro';
+import { AvisoEstimativa } from '../../components/AvisoEstimativa';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  return (await getCollection('sindromes')).map((s) => ({ params: { slug: s.id }, props: { s } }));
+}
+const { s } = Astro.props;
+const { Content } = await render(s);
+---
+<Base titulo={s.data.nome} descricao={s.data.resumo}>
+  <h1>{s.data.nome}</h1>
+  <p class="selo">{s.data.cariotipo}</p>
+  <Revisao revisadoPor={s.data.revisadoPor} atualizadoEm={s.data.atualizadoEm} />
+  <Content />
+  <p>{s.data.dependeIdadeMaterna ? 'O risco aumenta com a idade materna.' : 'Não depende da idade materna.'}</p>
+  {s.data.fontes.map((f) => <p><Fonte titulo={f.titulo} url={f.url} /></p>)}
+  {s.data.dependeIdadeMaterna && <AvisoEstimativa />}
+</Base>

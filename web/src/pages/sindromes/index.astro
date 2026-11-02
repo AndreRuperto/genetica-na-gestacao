@@ -1,0 +1,13 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+const lista = (await getCollection('sindromes')).sort((a, b) => a.data.ordem - b.data.ordem);
+---
+<Base titulo="Síndromes cromossômicas" descricao="O que é cada alteração cromossômica e o que é correto dizer sobre ela.">
+  <h1>Síndromes cromossômicas</h1>
+  <ul>
+    {lista.map((s) => (
+      <li><a href={`/sindromes/${s.id}`}>{s.data.nome}</a> · {s.data.cariotipo}<br />{s.data.resumo}</li>
+    ))}
+  </ul>
+</Base>

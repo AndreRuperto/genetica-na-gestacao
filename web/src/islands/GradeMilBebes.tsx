@@ -1,4 +1,5 @@
 import type { CSSProperties, Ref } from 'react';
+import { CONDICOES, type TextosCondicao } from '../lib/condicoes';
 
 const COLUNAS = 40;
 const LINHAS = 25;
@@ -6,12 +7,12 @@ const PASSO = 12;
 const RAIO = 4;
 
 // React 19: `ref` chega como prop comum, sem forwardRef.
-type Props = { casos: number; idadeTexto: string; contexto?: string; compacta?: boolean; animada?: boolean; ref?: Ref<SVGSVGElement> };
+type Props = { casos: number; idadeTexto: string; contexto?: string; compacta?: boolean; animada?: boolean; textos?: TextosCondicao; ref?: Ref<SVGSVGElement> };
 
-export function GradeMilBebes({ casos, idadeTexto, contexto, compacta = false, animada = false, ref }: Props) {
+export function GradeMilBebes({ casos, idadeTexto, contexto, compacta = false, animada = false, textos = CONDICOES.t21, ref }: Props) {
   const total = COLUNAS * LINHAS;
   const referencia = contexto ?? `Idade da gestante na data prevista do parto: ${idadeTexto}`;
-  const rotulo = `${casos} em cada 1.000 bebês têm síndrome de Down; ${total - casos} não têm síndrome de Down. Estimativa ao nascimento, arredondada, para gestação única. ${referencia}. Não representa casos observados.`;
+  const rotulo = `${casos} em cada 1.000 bebês têm ${textos.sindrome}; ${total - casos} não têm ${textos.sindrome}. Estimativa ao nascimento, arredondada, para gestação única. ${referencia}. Não representa casos observados.`;
   const circulo = (i: number) => (
     <circle key={i} className={i >= total - casos ? 'caso' : undefined}
       cx={(i % COLUNAS) * PASSO + PASSO / 2} cy={Math.floor(i / COLUNAS) * PASSO + PASSO / 2}
@@ -31,7 +32,7 @@ export function GradeMilBebes({ casos, idadeTexto, contexto, compacta = false, a
           : Array.from({ length: total }, (_, i) => circulo(i))}
       </svg>
       <figcaption>
-        <span className="grade-legenda"><span><i className="legenda-caso" aria-hidden="true" /><strong>{casos}</strong><span className="legenda-descricao">com síndrome de Down</span></span><span><i className="legenda-sem" aria-hidden="true" /><strong>{total - casos}</strong><span className="legenda-descricao">sem síndrome de Down</span></span></span>
+        <span className="grade-legenda"><span><i className="legenda-caso" aria-hidden="true" /><strong>{casos}</strong><span className="legenda-descricao">com {textos.sindrome}</span></span><span><i className="legenda-sem" aria-hidden="true" /><strong>{total - casos}</strong><span className="legenda-descricao">sem {textos.sindrome}</span></span></span>
         <span className="grade-contexto">{referencia}.</span>
         {!compacta && <span className="grade-explicacao">Cada ponto representa 1 bebê em 1.000 nascimentos hipotéticos, de gestações com um bebê. Os totais foram arredondados; não são casos observados nem uma previsão de quais bebês terão a condição.</span>}
         {compacta && <span className="grade-explicacao">Por 1.000 nascimentos hipotéticos · valores arredondados.</span>}

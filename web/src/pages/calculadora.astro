@@ -1,13 +1,18 @@
 ---
 import Base from '../layouts/Base.astro';
 import { Calculadora } from '../islands/Calculadora';
-import t21 from '@dados/risco/t21.json';
 import { tabelaSchema } from '../lib/tabela';
+import { ORDEM_CONDICOES } from '../lib/condicoes';
 
-const tabela = tabelaSchema.parse(t21);
+// Cada JSON em data/risco vira uma opção da calculadora (hoje só t21; t18 e t13 entram quando conferidas).
+const arquivos = import.meta.glob('@dados/risco/*.json', { eager: true, import: 'default' });
+const tabelas = Object.values(arquivos)
+  .map((dados) => tabelaSchema.parse(dados))
+  .sort((a, b) => ORDEM_CONDICOES.indexOf(a.condicao) - ORDEM_CONDICOES.indexOf(b.condicao));
+const sindromes = tabelas.length > 1 ? 'algumas trissomias' : 'síndrome de Down';
 ---
-<Base titulo="O que a idade muda na gestação" descricao="Explore estimativas de síndrome de Down ao nascimento por idade de referência, com explicações, fontes e limitações.">
+<Base titulo="O que a idade muda na gestação" descricao={`Explore estimativas de ${sindromes} ao nascimento por idade de referência, com explicações, fontes e limitações.`}>
   <h1>O que a idade muda na gestação</h1>
-  <p>Explore uma estimativa de síndrome de Down ao nascimento, baseada apenas na idade. Primeiro, escolha se houve fertilização in vitro (FIV) ou uso de óvulo doado: isso define de quem é a idade e qual data considerar. Os dados preenchidos ficam no seu navegador.</p>
-  <Calculadora client:load tabela={tabela} />
+  <p>Explore uma estimativa de {sindromes} ao nascimento, baseada apenas na idade. Primeiro, escolha se houve fertilização in vitro (FIV) ou uso de óvulo doado: isso define de quem é a idade e qual data considerar. Os dados preenchidos ficam no seu navegador.</p>
+  <Calculadora client:load tabelas={tabelas} />
 </Base>

@@ -396,6 +396,15 @@ caption { text-align: left; color: var(--texto-suave); font-size: .8rem; margin-
   .calculadora .alternar-datas { grid-template-columns: 40px minmax(0, 1fr); padding-inline: .8rem; }
 }
 .calculadora .grade { max-width: 43rem; margin-inline: auto; }
+.seletor-condicao { border: 0; padding: 0; margin: 0 0 1.4rem; min-width: 0; }
+.seletor-condicao legend { color: var(--texto-suave); font-size: .72rem; margin-bottom: .6rem; }
+.seletor-condicao > div { display: flex; flex-wrap: wrap; gap: .5rem; }
+.seletor-condicao label { position: relative; cursor: pointer; }
+.seletor-condicao input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+.seletor-condicao span { display: block; padding: .55rem 1rem; border: 1px solid #4d614d; border-radius: 999px; background: #121d17; color: var(--texto); font-size: .78rem; transition: background .2s, border-color .2s; }
+.seletor-condicao label:hover span { border-color: #7e9b70; }
+.seletor-condicao input:checked + span { background: var(--acao); border-color: var(--acao); color: var(--texto-acao); font-weight: 600; }
+.seletor-condicao input:focus-visible + span { outline: 3px solid var(--laranja); outline-offset: 3px; }
 .calculadora > figure { margin: 2rem 0; }
 table { border-collapse: collapse; width: 100%; font-size: .85rem; margin-block: 1.5rem; }
 th, td { text-align: left; border-bottom: 1px solid var(--borda); padding: .7rem; }

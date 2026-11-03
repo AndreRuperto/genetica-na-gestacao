@@ -5,12 +5,13 @@ import { umEmN, porcentagem, complemento } from '../lib/formatar';
 import { idadePorDatas } from '../lib/idade';
 import { lerConfiguracaoDoHash, hashDaIdade } from '../lib/hash';
 import { baixarImagem } from '../lib/baixarImagem';
+import { CONDICOES, maiuscula, type Condicao } from '../lib/condicoes';
 import { AvisoEstimativa } from '../components/AvisoEstimativa';
 import { AvisoDados } from '../components/AvisoDados';
 import { GradeMilBebes } from './GradeMilBebes';
 import { CurvaRisco } from './CurvaRisco';
 
-type Props = { tabela: Tabela };
+type Props = { tabelas: Tabela[] };
 
 function IconeCampo({ tipo }: { tipo: 'ovulo' | 'frio' | 'bebe' | 'gemeos' | 'calendario' | 'escudo' | 'baixar' | 'grade' | 'livro' }) {
   const caminhos = {
@@ -27,8 +28,9 @@ function IconeCampo({ tipo }: { tipo: 'ovulo' | 'frio' | 'bebe' | 'gemeos' | 'ca
   return <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={caminhos[tipo]} /></svg>;
 }
 
-export function Calculadora({ tabela }: Props) {
+export function Calculadora({ tabelas }: Props) {
   const id = useId();
+  const [condicao, setCondicao] = useState<Condicao>(tabelas[0].condicao);
   const [idadeTexto, setIdadeTexto] = useState('');
   const [pelasDatas, setPelasDatas] = useState(false);
   const [nascimento, setNascimento] = useState('');
@@ -45,13 +47,16 @@ export function Calculadora({ tabela }: Props) {
         setOvulo(doHash.ovulo);
         setBebes(doHash.bebes);
         setPelasDatas(false);
+        if (tabelas.some((t) => t.condicao === doHash.condicao)) setCondicao(doHash.condicao);
       }
     };
     aplicarHash();
     window.addEventListener('hashchange', aplicarHash);
     return () => window.removeEventListener('hashchange', aplicarHash);
-  }, []);
+  }, [tabelas]);
 
+  const tabela = tabelas.find((t) => t.condicao === condicao) ?? tabelas[0];
+  const textos = CONDICOES[tabela.condicao];
   const usaDatas = pelasDatas && ovulo === 'proprio';
   const idade = usaDatas ? idadePorDatas(nascimento, dataParto) : idadeTexto === '' ? Number.NaN : Number(idadeTexto);
   const r = bebes > 1 ? { tipo: 'gemeos' as const }
@@ -60,12 +65,12 @@ export function Calculadora({ tabela }: Props) {
   const [idadeMinTabela, idadeMaxTabela] = faixaDaTabela(tabela);
 
   useEffect(() => {
-    const h = usaDatas ? '' : hashDaIdade(idade, ovulo, bebes);
+    const h = usaDatas ? '' : hashDaIdade(idade, ovulo, bebes, tabela.condicao);
     history.replaceState(null, '', location.pathname + h);
-  }, [idade, usaDatas, ovulo, bebes]);
+  }, [idade, usaDatas, ovulo, bebes, tabela.condicao]);
 
   const rotuloIdade = ovulo === 'doado' ? 'Idade na data da coleta do óvulo' : 'Idade da mãe na data prevista do parto';
-  const ref25 = tabela.valores['25'];
+  const ref25 = tabela.valores['25'] as number | undefined;
   const idadeExibida = new Intl.NumberFormat('pt-BR', { maximumFractionDigits: 2 }).format(idade);
   const referenciaIdade = ovulo === 'doado' ? 'Idade de quem forneceu o óvulo na coleta' : 'Idade da gestante na data prevista do parto';
   const contexto = `${referenciaIdade}: ${idadeExibida} anos${usaDatas ? ' (aproximadamente, calculada pelas datas)' : ''}`;
@@ -144,6 +149,17 @@ export function Calculadora({ tabela }: Props) {
         <p className="formulario-rodape"><span className="ponto" aria-hidden="true" /> A estimativa se atualiza enquanto você preenche.</p>
       </form>
 
+      {tabelas.length > 1 && (
+        <fieldset className="seletor-condicao">
+          <legend>Ver a estimativa para</legend>
+          <div>
+            {tabelas.map((t) => (
+              <label key={t.condicao}><input type="radio" name={`${id}-condicao`} checked={t.condicao === tabela.condicao} onChange={() => setCondicao(t.condicao)} /><span>{maiuscula(CONDICOES[t.condicao].sindrome)}</span></label>
+            ))}
+          </div>
+        </fieldset>
+      )}
+
       <section aria-label="Resultado" aria-live="polite">
         {r.tipo === 'invalido' && <p className="resultado-pendente">{usaDatas ? (nascimento && dataParto ? 'Confira as datas: o parto deve ser posterior ao nascimento da mãe, com idade entre 18 e 50 anos.' : 'Preencha as duas datas para visualizar a estimativa.') : idadeTexto === '' ? `Para visualizar a estimativa, informe: ${rotuloIdade.toLowerCase()}.` : 'Digite uma idade inteira entre 18 e 50 anos. Só mostramos estimativas dentro da faixa da tabela.'}</p>}
         {r.tipo === 'gemeos' && (
@@ -155,28 +171,28 @@ export function Calculadora({ tabela }: Props) {
         {r.tipo === 'ok' && (
           <article className="painel-resultado">
             <header className="resultado-cabecalho">
-              <div className="resultado-titulo"><span className="resultado-icone"><IconeCampo tipo="grade" /></span><div><p className="sobretitulo">ESTIMATIVA AO NASCIMENTO · UM BEBÊ</p><h2>Síndrome de Down <span>(trissomia 21)</span></h2></div></div>
+              <div className="resultado-titulo"><span className="resultado-icone"><IconeCampo tipo="grade" /></span><div><p className="sobretitulo">ESTIMATIVA AO NASCIMENTO · UM BEBÊ</p><h2>{maiuscula(textos.sindrome)} <span>({textos.trissomia})</span></h2></div></div>
               <button className="baixar-resultado" type="button" onClick={() => grade.current && baixarImagem(
                 grade.current, { contexto, conferido: tabela.conferido, n: r.n, fonte: r.fonte,
-                  fonteUrl: tabela.fonteUrl, interpolado: r.interpolado })}><IconeCampo tipo="baixar" /> Baixar imagem <span aria-hidden="true">PNG</span></button>
+                  fonteUrl: tabela.fonteUrl, interpolado: r.interpolado, textos })}><IconeCampo tipo="baixar" /> Baixar imagem <span aria-hidden="true">PNG</span></button>
             </header>
             <div className="resultado-referencia"><IconeCampo tipo="calendario" /><p><strong>{contexto}.</strong></p></div>
             <div className="resultado-corpo">
               <div className="resultado-metricas">
-                <div className="metrica-principal"><p className="metrica-rotulo"><span className="metrica-ponto" aria-hidden="true" /> Chance estimada de trissomia 21</p><p className="metrica-numero">{umEmN(r.n)}</p><p className="metrica-percentual"><strong>{porcentagem(r.pct)}</strong><span>dos nascimentos, segundo a tabela</span></p><p className="metrica-explicacao">Em média, cerca de 1 nascimento com trissomia 21 a cada {Math.round(r.n).toLocaleString('pt-BR')} nascimentos com essa idade de referência.</p></div>
-                <div className="metrica-complemento"><p>Chance de não ter trissomia 21</p><strong>{complemento(r.complementoPct)}</strong><p>“Sem trissomia 21” não significa ausência de outras condições de saúde.</p></div>
-                <p className="metrica-comparacao">Para comparar, aos 25 anos de referência: {umEmN(ref25)}</p>
+                <div className="metrica-principal"><p className="metrica-rotulo"><span className="metrica-ponto" aria-hidden="true" /> Chance estimada de {textos.trissomia}</p><p className="metrica-numero">{umEmN(r.n)}</p><p className="metrica-percentual"><strong>{porcentagem(r.pct)}</strong><span>dos nascimentos, segundo a tabela</span></p><p className="metrica-explicacao">Em média, cerca de 1 nascimento com {textos.trissomia} a cada {Math.round(r.n).toLocaleString('pt-BR')} nascimentos com essa idade de referência.</p></div>
+                <div className="metrica-complemento"><p>Chance de não ter {textos.trissomia}</p><strong>{complemento(r.complementoPct)}</strong><p>“Sem {textos.trissomia}” não significa ausência de outras condições de saúde.</p></div>
+                {ref25 !== undefined && <p className="metrica-comparacao">Para comparar, aos 25 anos de referência: {umEmN(ref25)}</p>}
               </div>
-              <div className="resultado-visual"><div className="visual-cabecalho"><h3>Em 1.000 nascimentos</h3><span className="visual-escala"><i aria-hidden="true" /> 1 ponto = 1 bebê</span></div><GradeMilBebes ref={grade} casos={casosEmMil(r.n)} idadeTexto={`${idadeExibida} anos`} contexto={contexto} /></div>
+              <div className="resultado-visual"><div className="visual-cabecalho"><h3>Em 1.000 nascimentos</h3><span className="visual-escala"><i aria-hidden="true" /> 1 ponto = 1 bebê</span></div><GradeMilBebes ref={grade} casos={casosEmMil(r.n)} idadeTexto={`${idadeExibida} anos`} contexto={contexto} textos={textos} /></div>
             </div>
-            <div className="resultado-leitura"><span className="leitura-icone"><IconeCampo tipo="livro" /></span><div><h3>Como ler essa estimativa</h3><p>Estimativa populacional para síndrome de Down (trissomia 21), baseada apenas na idade. Não é resultado de exame nem probabilidade de engravidar. Isso não prevê o resultado de uma gestação específica.</p>{ovulo === 'doado' && <p>Na FIV, usamos a idade na coleta como referência para a tabela. A estimativa não incorpora resultados de exames do embrião ou da gestação.</p>}</div></div>
+            <div className="resultado-leitura"><span className="leitura-icone"><IconeCampo tipo="livro" /></span><div><h3>Como ler essa estimativa</h3><p>Estimativa populacional para {textos.sindrome} ({textos.trissomia}), baseada apenas na idade. Não é resultado de exame nem probabilidade de engravidar. Isso não prevê o resultado de uma gestação específica.</p>{ovulo === 'doado' && <p>Na FIV, usamos a idade na coleta como referência para a tabela. A estimativa não incorpora resultados de exames do embrião ou da gestação.</p>}</div></div>
             <footer className="resultado-fontes"><p><span>FONTE INFORMADA NA TABELA</span><a href={tabela.fonteUrl} rel="noopener">{r.fonte}<span aria-hidden="true"> ↗</span></a>{r.interpolado && <small>Valor interpolado entre idades vizinhas.</small>}</p><span className={`resultado-status${tabela.conferido ? ' resultado-conferido' : ''}`}><i aria-hidden="true" />{tabela.conferido ? 'Valores conferidos' : 'Conferência na publicação original pendente'}</span></footer>
           </article>
         )}
       </section>
 
       {bebes === 1 && <CurvaRisco tabela={tabela} idade={r.tipo === 'ok' ? idade : undefined} referenciaIdade={referenciaIdade} />}
-      <AvisoEstimativa />
+      <AvisoEstimativa sindrome={textos.sindrome} />
       <p>
         <strong>E a idade do pai?</strong> O efeito da idade paterna sobre trissomias é pequeno. O
         efeito maior é sobre mutações novas em um único gene, que esta calculadora não estima.

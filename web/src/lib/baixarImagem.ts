@@ -1,4 +1,5 @@
 import { complemento, porcentagem, umEmN } from './formatar';
+import { maiuscula, type TextosCondicao } from './condicoes';
 
 const LARGURA = 1080;
 
@@ -9,6 +10,7 @@ type DadosImagem = {
   fonte: string;
   fonteUrl: string;
   interpolado: boolean;
+  textos: TextosCondicao;
 };
 
 /** Infográfico independente: chance da tabela e contagem arredondada têm rótulos distintos. */
@@ -98,7 +100,7 @@ export async function baixarImagem(svg: SVGSVGElement, dados: DadosImagem) {
   const statusY = fonteY + 27 + fonteAltura + enderecoAltura + 14 + (dados.interpolado ? 28 : 0);
   const statusAltura = dados.conferido ? 62 : 94;
   const avisoY = statusY + statusAltura + 20;
-  const aviso = 'Estimativa populacional baseada apenas na idade. Não é diagnóstico nem probabilidade de engravidar. “Sem trissomia 21” não exclui outras condições. Converse com seu obstetra ou geneticista.';
+  const aviso = `Estimativa populacional baseada apenas na idade. Não é diagnóstico nem probabilidade de engravidar. “Sem ${dados.textos.trissomia}” não exclui outras condições. Converse com seu obstetra ou geneticista.`;
   const avisoAltura = linhas(aviso, 984, 18).length * 27;
   const rodapeY = avisoY + avisoAltura + 26;
   canvas.height = Math.max(1440, Math.ceil(rodapeY + 75));
@@ -125,8 +127,8 @@ export async function baixarImagem(svg: SVGSVGElement, dados: DadosImagem) {
   caixa(744, 51, 288, 33, 16, '#acd29e08', '#506847');
   texto('INFORMAÇÃO EM PERSPECTIVA', 764, 59, 252, 14, cores.verde, 500);
 
-  texto('Síndrome de Down', 48, 126, 984, 51, cores.titulo, 600);
-  texto('Trissomia 21  ·  estimativa ao nascimento  ·  gestação única', 50, 195, 984, 21, cores.texto);
+  texto(maiuscula(dados.textos.sindrome), 48, 126, 984, 51, cores.titulo, 600);
+  texto(`${maiuscula(dados.textos.trissomia)}  ·  estimativa ao nascimento  ·  gestação única`, 50, 195, 984, 21, cores.texto);
   caixa(48, 244, 984, alturaContexto, 14, '#1d2c21', '#4a6044');
   // Ícone de calendário para conectar o valor à referência correta.
   caixa(67, 265, 31, 31, 7, '#acd29e0a', '#5a724f');
@@ -155,7 +157,7 @@ export async function baixarImagem(svg: SVGSVGElement, dados: DadosImagem) {
   texto('dos nascimentos, segundo a tabela', 72, corpoY + 217, 272, 18, cores.texto, 400, 27);
 
   caixa(72, corpoY + 300, 272, 168, 13, '#acd29e06', '#5f7954');
-  texto('CHANCE DE NÃO TER\nTRISSOMIA 21', 90, corpoY + 316, 236, 16, '#c1d1b5', 500, 24);
+  texto(`CHANCE DE NÃO TER\n${dados.textos.trissomia.toUpperCase()}`, 90, corpoY + 316, 236, 16, '#c1d1b5', 500, 24);
   texto(complemento(100 - pct), 90, corpoY + 371, 236, 50, cores.verde, 500);
   texto('Não exclui outras condições.', 90, corpoY + 438, 236, 16, cores.texto);
   texto('Os números descrevem uma população. Não determinam o resultado de uma gestação específica.', 72, corpoY + 492, 272, 17, cores.texto, 400, 26);
@@ -166,8 +168,8 @@ export async function baixarImagem(svg: SVGSVGElement, dados: DadosImagem) {
   ctx.drawImage(img, 404, corpoY + 123, 592, 370);
   const legendaY = corpoY + 526;
   for (const item of [
-    { x: 392, valor: casos, rotulo: 'com síndrome\nde Down', color: cores.laranja, fundo: '#e9ac7407', borda: '#8d6744' },
-    { x: 708, valor: 1000 - casos, rotulo: 'sem síndrome\nde Down', color: cores.verde, fundo: '#acd29e07', borda: '#5f7954' },
+    { x: 392, valor: casos, rotulo: `com ${dados.textos.sindrome.replace(' ', '\n')}`, color: cores.laranja, fundo: '#e9ac7407', borda: '#8d6744' },
+    { x: 708, valor: 1000 - casos, rotulo: `sem ${dados.textos.sindrome.replace(' ', '\n')}`, color: cores.verde, fundo: '#acd29e07', borda: '#5f7954' },
   ]) {
     caixa(item.x, legendaY, 300, 62, 10, item.fundo, item.borda);
     ponto(item.x + 15, legendaY + 31, 3.5, item.color);

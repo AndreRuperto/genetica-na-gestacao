@@ -12,7 +12,7 @@ beforeEach(() => history.replaceState(null, '', '/calculadora'));
 const resultado = () => within(screen.getByRole('region', { name: 'Resultado' }));
 
 test('idade → cartão, grade, aviso e hash', async () => {
-  render(<Calculadora tabela={tabela} />);
+  render(<Calculadora tabelas={[tabela]} />);
   await userEvent.type(screen.getByLabelText(/idade da mãe na data prevista do parto/i), '40');
   expect(resultado().getByText('1 em 98')).toBeInTheDocument();
   expect(resultado().getByText('1,02%')).toBeInTheDocument();
@@ -23,18 +23,18 @@ test('idade → cartão, grade, aviso e hash', async () => {
 });
 
 test('aviso fixo aparece mesmo sem idade', () => {
-  render(<Calculadora tabela={tabela} />);
+  render(<Calculadora tabelas={[tabela]} />);
   expect(screen.getByRole('note')).toBeInTheDocument();
 });
 
 test('lê a idade do hash ao abrir', () => {
   history.replaceState(null, '', '/calculadora#idade=35');
-  render(<Calculadora tabela={tabela} />);
+  render(<Calculadora tabelas={[tabela]} />);
   expect(resultado().getByText('1 em 403')).toBeInTheDocument();
 });
 
 test('gêmeos → aviso, sem número', async () => {
-  render(<Calculadora tabela={tabela} />);
+  render(<Calculadora tabelas={[tabela]} />);
   await userEvent.type(screen.getByLabelText(/idade da mãe/i), '35');
   await userEvent.click(screen.getByLabelText(/dois ou mais/i));
   expect(resultado().queryByText('1 em 403')).toBeNull();
@@ -42,21 +42,21 @@ test('gêmeos → aviso, sem número', async () => {
 });
 
 test('óvulo doado troca o rótulo e usa a idade da coleta', async () => {
-  render(<Calculadora tabela={tabela} />);
+  render(<Calculadora tabelas={[tabela]} />);
   await userEvent.click(screen.getByLabelText(/doado/i));
   await userEvent.type(screen.getByLabelText(/idade na data da coleta do óvulo/i), '25');
   expect(resultado().getByText('1 em 1.362')).toBeInTheDocument();
 });
 
 test('fora da tabela → aviso, sem número', async () => {
-  render(<Calculadora tabela={tabela} />);
+  render(<Calculadora tabelas={[tabela]} />);
   await userEvent.type(screen.getByLabelText(/idade da mãe/i), '47');
   expect(resultado().getByText(/entre 21 e 45 anos/)).toBeInTheDocument();
   expect(resultado().queryByText(/^1 em /)).toBeNull();
 });
 
 test('controles de idade atualizam a estimativa e respeitam os limites', async () => {
-  render(<Calculadora tabela={tabela} />);
+  render(<Calculadora tabelas={[tabela]} />);
   const campo = screen.getByLabelText(/idade da mãe na data prevista do parto/i);
   const menos = screen.getByRole('button', { name: /diminuir idade/i });
   const mais = screen.getByRole('button', { name: /aumentar idade/i });
@@ -75,7 +75,7 @@ test('controles de idade atualizam a estimativa e respeitam os limites', async (
 });
 
 test('alternar para datas calcula a idade e preserva a idade digitada ao voltar', async () => {
-  render(<Calculadora tabela={tabela} />);
+  render(<Calculadora tabelas={[tabela]} />);
   await userEvent.type(screen.getByLabelText(/idade da mãe na data prevista do parto/i), '40');
   const alternar = screen.getByRole('checkbox', { name: /calcular pelas datas/i });
   await userEvent.click(alternar);
@@ -91,7 +91,7 @@ test('alternar para datas calcula a idade e preserva a idade digitada ao voltar'
 });
 
 test('trocar a origem não reaproveita idade da gestante como idade na coleta', async () => {
-  render(<Calculadora tabela={tabela} />);
+  render(<Calculadora tabelas={[tabela]} />);
   await userEvent.type(screen.getByRole('spinbutton'), '45');
   expect(resultado().getByText('1 em 38')).toBeInTheDocument();
   await userEvent.click(screen.getByRole('radio', { name: /doado/i }));
@@ -106,7 +106,7 @@ test('trocar a origem não reaproveita idade da gestante como idade na coleta', 
 
 test('abrir link FIV restaura a origem e não apresenta idade materna no gráfico', () => {
   history.replaceState(null, '', '/calculadora#idade=45&ovulo=doado');
-  render(<Calculadora tabela={tabela} />);
+  render(<Calculadora tabelas={[tabela]} />);
   expect(screen.getByRole('radio', { name: /doado/i })).toBeChecked();
   expect(resultado().getByText('1 em 38')).toBeInTheDocument();
   expect(screen.getByRole('img', { name: /26 em cada 1.000/ })).toHaveAccessibleName(/974.*coleta: 45 anos/);
@@ -115,7 +115,7 @@ test('abrir link FIV restaura a origem e não apresenta idade materna no gráfic
 
 test('link de gêmeos não volta a mostrar estimativa para gestação única', () => {
   history.replaceState(null, '', '/calculadora#idade=35&ovulo=doado&bebes=2');
-  render(<Calculadora tabela={tabela} />);
+  render(<Calculadora tabelas={[tabela]} />);
   expect(screen.getByRole('radio', { name: /dois ou mais/i })).toBeChecked();
   expect(resultado().queryByText('1 em 403')).toBeNull();
   expect(resultado().getByText(/gestação única/i)).toBeInTheDocument();
@@ -123,7 +123,7 @@ test('link de gêmeos não volta a mostrar estimativa para gestação única', (
 });
 
 test('expõe conferência pendente e rejeita idade manual com fração', () => {
-  render(<Calculadora tabela={tabela} />);
+  render(<Calculadora tabelas={[tabela]} />);
   expect(screen.getByText('Dados em conferência.')).toBeInTheDocument();
   fireEvent.change(screen.getByRole('spinbutton'), { target: { value: '35.5' } });
   expect(resultado().getByText(/idade inteira/)).toBeInTheDocument();
@@ -132,11 +132,42 @@ test('expõe conferência pendente e rejeita idade manual com fração', () => {
 });
 
 test('trocar só o fragmento do link atualiza origem e sai do modo por datas', async () => {
-  render(<Calculadora tabela={tabela} />);
+  render(<Calculadora tabelas={[tabela]} />);
   await userEvent.click(screen.getByRole('checkbox', { name: /calcular pelas datas/i }));
   history.replaceState(null, '', '/calculadora#idade=25&ovulo=doado');
   fireEvent(window, new Event('hashchange'));
   expect(screen.getByRole('radio', { name: /doado/i })).toBeChecked();
   expect(screen.getByRole('spinbutton')).toHaveValue(25);
   expect(resultado().getByText('1 em 1.362')).toBeInTheDocument();
+});
+
+// Tabela fictícia, só para exercitar a troca de condição; não são valores reais de T18.
+const t18Ficticia = { ...tabela, condicao: 't18', nome: 'Fictícia', valores: Object.fromEntries(Object.entries(tabela.valores).map(([i, n]) => [i, n * 10])) } as Tabela;
+
+test('com uma só tabela, não mostra seletor de condição', () => {
+  render(<Calculadora tabelas={[tabela]} />);
+  expect(screen.queryByRole('group', { name: /ver a estimativa para/i })).toBeNull();
+});
+
+test('trocar a condição atualiza título, números e link', async () => {
+  render(<Calculadora tabelas={[tabela, t18Ficticia]} />);
+  await userEvent.type(screen.getByRole('spinbutton'), '40');
+  expect(resultado().getByText('1 em 98')).toBeInTheDocument();
+  await userEvent.click(screen.getByRole('radio', { name: 'Síndrome de Edwards' }));
+  expect(resultado().getByRole('heading', { name: /síndrome de Edwards \(trissomia 18\)/i })).toBeInTheDocument();
+  expect(resultado().getByText('1 em 980')).toBeInTheDocument();
+  expect(screen.getByRole('img', { name: /em cada 1.000 bebês têm síndrome de Edwards/ })).toBeInTheDocument();
+  expect(screen.getByRole('img', { name: /Curva do risco de síndrome de Edwards/ })).toBeInTheDocument();
+  expect(location.hash).toBe('#idade=40&condicao=t18');
+});
+
+test('link com condição abre nela; condição sem tabela cai na trissomia 21', () => {
+  history.replaceState(null, '', '/calculadora#idade=40&condicao=t18');
+  const { unmount } = render(<Calculadora tabelas={[tabela, t18Ficticia]} />);
+  expect(screen.getByRole('radio', { name: 'Síndrome de Edwards' })).toBeChecked();
+  unmount();
+  history.replaceState(null, '', '/calculadora#idade=40&condicao=t13');
+  render(<Calculadora tabelas={[tabela, t18Ficticia]} />);
+  expect(screen.getByRole('radio', { name: 'Síndrome de Down' })).toBeChecked();
+  expect(resultado().getByText('1 em 98')).toBeInTheDocument();
 });

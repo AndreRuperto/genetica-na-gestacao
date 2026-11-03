@@ -2,7 +2,7 @@ import { z } from 'astro/zod';
 
 export const tabelaSchema = z
   .object({
-    condicao: z.string(),
+    condicao: z.enum(['t21', 't18', 't13']),
     nome: z.string(),
     fonte: z.string().min(1),
     fonteUrl: z.url(),

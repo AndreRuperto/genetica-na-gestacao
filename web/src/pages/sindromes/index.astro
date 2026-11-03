@@ -2,6 +2,8 @@
 import Base from '../../layouts/Base.astro';
 import Icone from '../../components/Icone.astro';
 import '../../styles/paginas-referencia.css';
+import CariotipoIcone from '../../components/CariotipoIcone.astro';
+import { CARIOTIPOS } from '../../lib/cariotipos';
 import { getCollection } from 'astro:content';
 const lista = (await getCollection('sindromes')).sort((a, b) => a.data.ordem - b.data.ordem);
 ---
@@ -25,7 +27,7 @@ const lista = (await getCollection('sindromes')).sort((a, b) => a.data.ordem - b
       {lista.map((s, i) => (
         <li>
           <a class="sindrome-cartao" href={`/sindromes/${s.id}`} aria-labelledby={`nome-${s.id}`}>
-            <div class="sindrome-cartao__topo"><span class="sindrome-cartao__icone"><Icone nome="dna" tamanho={25} /></span><span class="sindrome-cartao__numero" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span></div>
+            <div class="sindrome-cartao__topo"><span class="sindrome-cartao__icone">{CARIOTIPOS[s.id] ? <CariotipoIcone cariotipo={CARIOTIPOS[s.id]} /> : <Icone nome="dna" tamanho={25} />}</span><span class="sindrome-cartao__numero" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span></div>
             <h3 id={`nome-${s.id}`}>{s.data.nome}</h3>
             <p class="sindrome-cartao__cariotipo">{s.data.cariotipo}</p>
             <p class="sindrome-cartao__resumo">{s.data.resumo}</p>

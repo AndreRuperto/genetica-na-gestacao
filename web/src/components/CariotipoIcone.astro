@@ -1,0 +1,45 @@
+---
+import { CROMOSSOMOS, type Cariotipo } from '../lib/cariotipos';
+
+// Miniatura do cariótipo para os cartões: um traço por cromossomo e a sigla da alteração.
+interface Props { cariotipo: Cariotipo; altura?: number }
+const { cariotipo, altura = 19 } = Astro.props;
+
+const LARGURA = 5, ESPACO = 4, CINTURA = 2.4;
+const maior = Math.max(...cariotipo.copias.map(({ c }) => CROMOSSOMOS[c].mb));
+const formas = cariotipo.copias.map((copia) => {
+  const { mb, p } = CROMOSSOMOS[copia.c];
+  const total = (mb / maior) * altura;
+  return { ...copia, p: total * p, q: total * (1 - p) };
+});
+const centro = Math.max(...formas.map((f) => f.p));
+const alturaSvg = centro + Math.max(...formas.map((f) => f.q));
+const larguraSvg = Math.max(formas.length * LARGURA + (formas.length - 1) * ESPACO, 22);
+const inicio = (larguraSvg - (formas.length * LARGURA + (formas.length - 1) * ESPACO)) / 2;
+const desenhos = formas.map((f, i) => {
+  const x = inicio + i * (LARGURA + ESPACO);
+  const pRestante = f.estado === 'delecao' ? f.p * 0.45 : f.p;
+  const braco = (y: number, h: number) => ({ x, y, h: Math.max(h, 1.5) });
+  return {
+    estado: f.estado,
+    bracos: [braco(centro - pRestante, pRestante - CINTURA / 2), braco(centro + CINTURA / 2, f.q - CINTURA / 2)],
+    perdido: f.estado === 'delecao' ? [braco(centro - f.p, f.p - pRestante - 1.5)] : [],
+  };
+});
+---
+<svg class="cariotipo-icone" viewBox={`-1 -1 ${larguraSvg + 2} ${alturaSvg + 12}`} width={larguraSvg + 2} height={alturaSvg + 12} aria-hidden="true">
+  {desenhos.map((d) => (
+    <g class={d.estado ? `estado-${d.estado}` : undefined}>
+      {d.bracos.map((b) => <rect x={b.x} y={b.y} width={LARGURA} height={b.h} rx={Math.min(LARGURA / 2, b.h / 2)} />)}
+      {d.perdido.map((b) => <rect class="perdido" x={b.x} y={b.y} width={LARGURA} height={b.h} rx={Math.min(LARGURA / 2, b.h / 2)} />)}
+    </g>
+  ))}
+  <text x={larguraSvg / 2} y={alturaSvg + 9.5} text-anchor="middle">{cariotipo.sigla}</text>
+</svg>
+
+<style>
+  rect { fill: #acd29e30; stroke: #bed7aa; stroke-width: 1; }
+  .estado-extra rect { fill: #e9ac7440; stroke: var(--laranja); }
+  text { fill: #bed7aa; font-size: 7.5px; font-weight: 600; letter-spacing: .02em; }
+  .estado-ausente rect, .perdido { fill: none; stroke: var(--laranja); stroke-dasharray: 2 1.5; }
+</style>

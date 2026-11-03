@@ -2,7 +2,7 @@
 
 **Genética e gravidez em linguagem simples, com números em contexto e fontes para aprofundar a leitura.**
 
-[![CI](https://github.com/AndreRuperto/genetica-na-gestacao/actions/workflows/ci.yml/badge.svg)](https://github.com/AndreRuperto/genetica-na-gestacao/actions/workflows/ci.yml)
+[![CI](https://github.com/TwoBrainCellsBrasil/genetica-na-gestacao/actions/workflows/ci.yml/badge.svg)](https://github.com/TwoBrainCellsBrasil/genetica-na-gestacao/actions/workflows/ci.yml)
 [![Licença MIT](https://img.shields.io/badge/licen%C3%A7a-MIT-aad19c)](LICENSE)
 
 Código do site **Genética da Gravidez Explicada**: uma experiência educativa em português que reúne calculadora de estimativas, visualizações e explicações sobre genética na gestação. Tema escuro, navegação por teclado e layouts para celular e desktop.
@@ -40,7 +40,7 @@ Código do site **Genética da Gravidez Explicada**: uma experiência educativa 
 Requisitos: **Node.js 22.23.4 ou superior**, npm e Git. Os comandos da aplicação são executados na pasta `web/`.
 
 ```bash
-git clone https://github.com/AndreRuperto/genetica-na-gestacao.git
+git clone https://github.com/TwoBrainCellsBrasil/genetica-na-gestacao.git
 cd genetica-na-gestacao/web
 npm ci
 npm run dev -- --background

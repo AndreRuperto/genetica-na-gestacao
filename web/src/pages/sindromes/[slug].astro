@@ -4,6 +4,8 @@ import Icone from '../../components/Icone.astro';
 import '../../styles/paginas-referencia.css';
 import '../../styles/sindrome-detalhe.css';
 import { AvisoEstimativa } from '../../components/AvisoEstimativa';
+import Cariotipo from '../../components/Cariotipo.astro';
+import { CARIOTIPOS } from '../../lib/cariotipos';
 import { getCollection, render } from 'astro:content';
 
 export async function getStaticPaths() {
@@ -16,6 +18,7 @@ export async function getStaticPaths() {
 const { s, anterior, proxima, total } = Astro.props;
 const { Content, headings } = await render(s);
 const secoes = headings.filter((heading) => heading.depth === 2);
+const cariotipo = CARIOTIPOS[s.id];
 const data = new Date(s.data.atualizadoEm + 'T12:00:00').toLocaleDateString('pt-BR');
 ---
 <Base titulo={s.data.nome} descricao={s.data.resumo} amplo>
@@ -34,6 +37,7 @@ const data = new Date(s.data.atualizadoEm + 'T12:00:00').toLocaleDateString('pt-
           <a href="#fontes">Consultar fontes <Icone nome="livro" tamanho={16} /></a>
         </div>
       </div>
+      {cariotipo && <Cariotipo cariotipo={cariotipo} />}
       <aside class="sindrome-ficha" aria-label="Informações desta página">
         <div class="sindrome-ficha__topo"><span><Icone nome="dna" tamanho={24} /></span><p>EM FOCO</p></div>
         <dl>

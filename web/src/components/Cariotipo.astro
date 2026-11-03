@@ -1,0 +1,48 @@
+---
+import { CROMOSSOMOS, type Cariotipo } from '../lib/cariotipos';
+
+interface Props { cariotipo: Cariotipo }
+const { cariotipo } = Astro.props;
+
+const ALTURA = 150, CROMATIDE = 10, FENDA = 2, ESPACO = 22, MARGEM = 10, CINTURA = 4;
+const LARGURA_CROMOSSOMO = CROMATIDE * 2 + FENDA;
+const maior = Math.max(...cariotipo.copias.map(({ c }) => CROMOSSOMOS[c].mb));
+const formas = cariotipo.copias.map((copia) => {
+  const { mb, p } = CROMOSSOMOS[copia.c];
+  const altura = (mb / maior) * ALTURA;
+  return { ...copia, p: altura * p, q: altura * (1 - p) };
+});
+// Centrômeros alinhados numa mesma linha, como num cariótipo de verdade.
+const centro = MARGEM + Math.max(...formas.map((f) => f.p));
+const base = centro + Math.max(...formas.map((f) => f.q));
+const largura = MARGEM * 2 + formas.length * LARGURA_CROMOSSOMO + (formas.length - 1) * ESPACO;
+const alturaSvg = base + 30;
+
+const bracos = (x: number, topo: number, altura: number) => [0, CROMATIDE + FENDA].map((dx) => ({
+  x: x + dx, y: topo, w: CROMATIDE, h: Math.max(altura, 2), rx: Math.min(CROMATIDE / 2, altura / 2),
+}));
+const desenhos = formas.map((f, i) => {
+  const x = MARGEM + i * (LARGURA_CROMOSSOMO + ESPACO);
+  const pRestante = f.estado === 'delecao' ? f.p * 0.45 : f.p;
+  return {
+    ...f, x,
+    retangulos: [...bracos(x, centro - pRestante, pRestante - CINTURA / 2), ...bracos(x, centro + CINTURA / 2, f.q - CINTURA / 2)],
+    perdido: f.estado === 'delecao' ? bracos(x, centro - f.p, f.p - pRestante - 3) : [],
+    faixas: [0.3, 0.55, 0.8].map((t) => centro + CINTURA / 2 + (f.q - CINTURA) * t),
+  };
+});
+---
+<figure class="cariotipo">
+  <svg viewBox={`0 0 ${largura} ${alturaSvg}`} width={largura} height={alturaSvg} role="img" aria-label={`Cariótipo simplificado: ${cariotipo.legenda}`}>
+    <line x1="0" x2={largura} y1={centro} y2={centro} class="cariotipo__linha" />
+    {desenhos.map((d) => (
+      <g class:list={['cariotipo__cromossomo', d.estado && `cariotipo__cromossomo--${d.estado}`]}>
+        {d.retangulos.map((r) => <rect x={r.x} y={r.y} width={r.w} height={r.h} rx={r.rx} />)}
+        {d.estado !== 'ausente' && d.faixas.map((y) => <line class="cariotipo__faixa" x1={d.x + 1} x2={d.x + LARGURA_CROMOSSOMO - 1} y1={y} y2={y} />)}
+        {d.perdido.map((r) => <rect class="cariotipo__perdido" x={r.x} y={r.y} width={r.w} height={r.h} rx={r.rx} />)}
+        <text x={d.x + LARGURA_CROMOSSOMO / 2} y={base + 22} text-anchor="middle">{d.c}</text>
+      </g>
+    ))}
+  </svg>
+  <figcaption><span>CARIÓTIPO SIMPLIFICADO</span>{cariotipo.legenda}</figcaption>
+</figure>

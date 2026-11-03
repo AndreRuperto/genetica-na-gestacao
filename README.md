@@ -102,6 +102,27 @@ npm.cmd run preview -- --port 4340
 
 Essa variável **não valida os dados** e não remove os avisos da interface. Para voltar à validação padrão no PowerShell, execute `Remove-Item Env:PERMITIR_NAO_CONFERIDO`.
 
+## Deploy no Railway
+
+O repositório inclui um [`Dockerfile`](Dockerfile) com build em Node.js e servidor estático Caddy, além da configuração [`railway.json`](railway.json). O container final contém os arquivos gerados em `web/dist/` e escuta na variável `PORT` fornecida pelo Railway (8080 por padrão).
+
+1. Conecte este repositório ao serviço, usando a branch `main`.
+2. Mantenha **Root Directory** na raiz do repositório (`/`), pois o build também precisa de `data/`. Usar apenas `/web` exclui esses dados.
+3. Deixe **Build Command** e **Start Command** sem substituições manuais. A configuração usa o Dockerfile para construir e iniciar o site.
+4. Enquanto os dados estiverem em conferência, adicione em **Variables**: `PERMITIR_NAO_CONFERIDO=1`. Isso publica uma **demonstração educativa**, mantendo os avisos da interface; não valida os dados.
+5. Faça um novo deploy com o commit mais recente e gere o domínio público em **Networking**.
+
+Sem essa variável, o build continuará bloqueado enquanto houver tabelas não conferidas. Quando a conferência integral for concluída e registrada, remova a variável.
+
+Para testar o mesmo container localmente, a partir da raiz:
+
+```bash
+docker build --build-arg PERMITIR_NAO_CONFERIDO=1 -t genetica-na-gestacao .
+docker run --rm -p 8080:8080 genetica-na-gestacao
+```
+
+Abra http://localhost:8080. As rotas são servidas como páginas estáticas independentes, incluindo URLs acessadas diretamente, como `/sindromes/down/`.
+
 ## Dados, referências e limites
 
 Os valores ficam em [`data/risco/t21.json`](data/risco/t21.json), separados do código. O schema verifica números inteiros positivos, continuidade das idades e ordem dos valores.

@@ -174,7 +174,12 @@ button, a, input { -webkit-tap-highlight-color: transparent; }
 .marca-rodape { font-size: .8rem; }
 .marca-rodape .marca-icone { width: 37px; height: 42px; }
 .rodape-interno p { color: var(--texto-suave); font-size: .73rem; margin: 0; }
-.credito { color: var(--texto-suave); font-size: .63rem; text-decoration: none; }
+.credito { display: flex; flex-direction: column; align-items: flex-end; gap: .55rem; color: var(--texto-suave); font-size: .68rem; }
+.credito-redes { display: flex; gap: .7rem; }
+.credito-redes a { color: var(--texto-suave); display: flex; transition: color .2s; }
+.credito-redes a:hover { color: var(--texto); }
+.credito span a { color: var(--texto); font-weight: 600; text-decoration: none; }
+.credito span a:hover { text-decoration: underline; }
 .rodape-aviso { border-top: 1px solid var(--borda); padding: 1.2rem 0 1.6rem; color: var(--texto-suave); font-size: .63rem; text-align: center; }
 .aviso { background: var(--creme); border-left: 3px solid var(--laranja); padding: 1.2rem 1.5rem; border-radius: 0 10px 10px 0; font-size: .9rem; }
 .fonte { font-size: .78rem; color: var(--texto-suave); }
@@ -495,6 +500,7 @@ summary { cursor: pointer; font-weight: 500; }
   .rodape { padding-inline: 1.3rem; }
   .rodape-interno { flex-direction: column; align-items: flex-start; gap: 1.3rem; padding: 2rem 0; }
   .rodape-aviso { text-align: left; }
+  .credito { align-items: flex-start; }
   .calculadora form, .cartao, .card-mito { padding: 1.2rem; }
   .calculadora fieldset { padding: .8rem; }
   th, td { padding: .5rem .3rem; font-size: .73rem; }

@@ -1,88 +1,163 @@
-# Genética da Gravidez Explicada
+# Genética na Gestação
 
-Site educativo em desenvolvimento sobre genética na gravidez, com estimativas por idade,
-fontes e limitações explícitas. A tabela ainda aguarda conferência na publicação original;
-os valores da demonstração não devem orientar decisões de saúde.
+**Genética e gravidez em linguagem simples, com números em contexto e fontes para aprofundar a leitura.**
 
-**O que é:** material de divulgação científica em português, com uma calculadora que roda só no
-navegador, visualizações simples e textos com fontes e status de revisão sobre síndromes cromossômicas.
+[![CI](https://github.com/AndreRuperto/genetica-na-gestacao/actions/workflows/ci.yml/badge.svg)](https://github.com/AndreRuperto/genetica-na-gestacao/actions/workflows/ci.yml)
+[![Licença MIT](https://img.shields.io/badge/licen%C3%A7a-MIT-aad19c)](LICENSE)
 
-**O que não é:** diagnóstico, exame ou aconselhamento genético. Os números são estimativas
-populacionais baseadas apenas na idade. O risco de uma gestação específica é refinado com exames
-de rastreio e diagnóstico, junto com obstetra ou geneticista.
+Código do site **Genética da Gravidez Explicada**: uma experiência educativa em português que reúne calculadora de estimativas, visualizações e explicações sobre genética na gestação. Tema escuro, navegação por teclado e layouts para celular e desktop.
 
-## O que já funciona
+> [!IMPORTANT]
+> **Demonstração educativa em desenvolvimento.** A tabela de risco ainda está marcada como `conferido: false`: os valores não foram integralmente conferidos na publicação original. Os números não devem orientar decisões de saúde. O projeto não é diagnóstico, exame ou aconselhamento genético.
 
-- **Calculadora de trissomia 21** (`/calculadora`): idade da mãe na data prevista do parto, ou
-  cálculo pelas datas; FIV com óvulo próprio ou doado, fresco ou congelado (idade na coleta);
-  aviso sem estimativa para gestação de gêmeos. Mostra uma grade de
-  1.000 bebês (com opção de baixar como PNG), o cartão "1 em N" com porcentagem e fonte, a curva
-  de risco em escala log e um aviso fixo. A idade, a opção de FIV e o número de bebês ficam no
-  fragmento da URL (ex.: `#idade=25&ovulo=doado`), que o navegador não envia ao servidor.
-  Datas não entram no link. Ao trocar a origem, a idade é apagada para evitar confusão.
-  A imagem exportada inclui referência da idade, arredondamento, fonte e aviso de conferência.
-- **Síndromes cromossômicas** (`/sindromes`): 9 páginas, cada uma com fonte e selo de revisão.
-- **Mito ou verdade** (`/mito-ou-verdade`): 10 afirmações (5 mitos e 5 verdades), intercaladas,
-  com explicação, fonte, filtros por veredito e âncoras compartilháveis.
-- **Painel genético** (`/painel-genetico`): o que o painel de portadores mostra e o que não mostra.
-- **Metodologia** (`/metodologia`): fontes, fórmula, cuidados e a tabela completa.
+![Página inicial do projeto em tema escuro](docs/images/inicio.png)
 
-## Como rodar
+## O que você encontra
 
-Requer Node 22 ou mais novo.
+| Página | Conteúdo |
+| --- | --- |
+| `/` | Apresentação, números de exemplo e acesso aos conteúdos |
+| `/calculadora` | Estimativa de trissomia 21 por idade, grade de 1.000 pontos, curva e exportação em PNG |
+| `/sindromes` | Nove guias sobre alterações cromossômicas, com referências e status de revisão |
+| `/mito-ou-verdade` | Cinco mitos e cinco verdades, intercalados, com filtros e fontes |
+| `/painel-genetico` | O que o painel de portadores pesquisa, um exemplo de herança recessiva e limites do exame |
+| `/metodologia` | Fontes, fórmulas, tabela completa, limitações e conferência dos dados |
+
+### Uma calculadora que explica o resultado
+
+- Informa de quem é a idade e qual data considerar: parto ou coleta do óvulo, conforme a opção selecionada.
+- Permite digitar a idade ou calculá-la pelas datas, no modo sem FIV.
+- Apresenta a estimativa como **1 em N**, percentual e complemento, sem tratar o resultado como diagnóstico.
+- Representa 1.000 nascimentos hipotéticos e identifica o arredondamento dos pontos.
+- Exporta um infográfico com contexto da idade, fonte e aviso de conferência.
+- Preserva a configuração nos links e evita reaproveitar a idade ao mudar a origem do óvulo.
+- Exibe a indisponibilidade de estimativas para gestações múltiplas e para idades fora da tabela.
+
+![Exemplo do painel de resultado da calculadora, com números e grade de pontos](docs/images/calculadora.png)
+
+## Executar localmente
+
+Requisitos: **Node.js 22.23.4 ou superior**, npm e Git. Os comandos da aplicação são executados na pasta `web/`.
 
 ```bash
-cd web
-npm install
-npm run dev
+git clone https://github.com/AndreRuperto/genetica-na-gestacao.git
+cd genetica-na-gestacao/web
+npm ci
+npm run dev -- --background
 ```
 
-## Comandos
+Abra **http://localhost:4321** ou a porta indicada no terminal.
 
-Todos rodam em `web/`.
+No PowerShell, use `npm.cmd` e `npx.cmd` no lugar de `npm` e `npx` se a política de execução bloquear os arquivos `.ps1`. Não é preciso alterar a política do sistema.
 
-| Comando | O que faz |
-|---|---|
-| `npm run dev` | Servidor de desenvolvimento |
-| `npm run build` | Build estático em `dist/` (falha se houver tabela não conferida) |
-| `npm run preview` | Serve o build localmente |
-| `npm test` | Testes unitários e de componentes (Vitest) |
-| `npm run test:a11y` | Acessibilidade com axe e uso por teclado (Playwright; precisa de build) |
-| `npm run check` | Verificação de tipos e de conteúdo (`astro check`) |
+```powershell
+npm.cmd ci
+npm.cmd run dev -- --background
+```
 
-## Como os números entram
+Gerencie o servidor em segundo plano:
 
-As tabelas de risco ficam em `data/risco/*.json`, fora do código do site. Cada uma traz a fonte,
-o link, a data de atualização e o campo `conferido`. Os valores são validados por schema no
-build (N inteiros, decrescentes com a idade, sem idades faltando).
+```bash
+npm run astro -- dev status
+npm run astro -- dev logs
+npm run astro -- dev stop
+```
 
-A regra do `conferido`:
+## Desenvolvimento e verificações
 
-- `conferido: false` quer dizer que os valores ainda não foram conferidos na publicação original.
-- `npm run build` **falha** enquanto houver tabela com `conferido: false`. É o build de produção.
-- Para desenvolvimento, CI e pré-visualizações, use `PERMITIR_NAO_CONFERIDO=1`, que troca a falha
-  por um aviso:
+Todos os comandos abaixo partem de `web/`.
+
+| Comando | Finalidade |
+| --- | --- |
+| `npm run check` | Verificação de tipos, componentes Astro e conteúdo |
+| `npm test` | Testes de cálculo, componentes, links e conteúdo com Vitest |
+| `npm run test:a11y` | Acessibilidade com axe e navegação por teclado com Playwright |
+| `npm run build` | Build estático de produção, sujeito à conferência dos dados |
+| `npm run preview -- --port 4340` | Prévia do build em http://localhost:4340 |
+
+Para os testes de navegador, instale o Chromium do Playwright uma vez:
+
+```bash
+npx playwright install chromium
+```
+
+A integração contínua executa verificação de tipos, testes, build de demonstração e testes de acessibilidade a cada push e pull request. Consulte o [workflow de CI](.github/workflows/ci.yml).
+
+### Build de demonstração
+
+O build de produção falha enquanto existir uma tabela não conferida. Para desenvolvimento, CI ou revisão visual, é possível gerar uma demonstração com aviso explícito:
 
 ```bash
 PERMITIR_NAO_CONFERIDO=1 npm run build
+npm run preview -- --port 4340
 ```
 
-No PowerShell: `$env:PERMITIR_NAO_CONFERIDO=1; npm run build`.
+No PowerShell:
 
-Para conferir uma tabela, compare cada valor com a publicação original e, se tudo bater, mude
-`conferido` para `true` e `atualizadoEm` para a data da conferência.
+```powershell
+$env:PERMITIR_NAO_CONFERIDO = "1"
+npm.cmd run build
+npm.cmd run preview -- --port 4340
+```
 
-## Fontes e licenças
+Essa variável **não valida os dados** e não remove os avisos da interface. Para voltar à validação padrão no PowerShell, execute `Remove-Item Env:PERMITIR_NAO_CONFERIDO`.
 
-- Trissomia 21 ao nascimento: Morris JK, Wald NJ et al., *J Med Screen* 2007;14(1):5-7,
-  conforme reproduzido pelo BORN Ontario.
-- Trissomias 18 e 13: Savva GM, Walker K, Morris JK, *Prenat Diagn* 2010.
-- Painel de portadores: ACOG Committee Opinions 690 e 691 (2017).
-- Descrições das síndromes: Fetal Medicine Foundation e MedlinePlus Genetics.
+## Dados, referências e limites
 
-Cada página cita a fonte ao lado do número. Fonte tipográfica: Poppins (SIL Open Font License),
-via `@fontsource/poppins`.
+Os valores ficam em [`data/risco/t21.json`](data/risco/t21.json), separados do código. O schema verifica números inteiros positivos, continuidade das idades e ordem dos valores.
 
-## Documentos
+O recorte atual é **trissomia 21 ao nascimento, em gestação única, para idades de referência entre 21 e 45 anos**. Não representa probabilidade de engravidar, resultado de exame ou avaliação de todas as condições de saúde. Na FIV, a idade na coleta é usada como aproximação para a mesma tabela populacional; não há um modelo específico de FIV ou incorporação de exames do embrião.
 
-Design e plano de implementação em [`docs/plans/`](docs/plans/).
+Para atualizar uma tabela:
+
+1. Compare todos os valores com a publicação original e confira a população e o momento da estimativa.
+2. Registre a referência, o link e a data da conferência.
+3. Altere `conferido` para `true` somente após a conferência integral.
+4. Execute as verificações e revise a explicação mostrada na interface.
+
+Fontes indicadas no projeto incluem [MedlinePlus Genetics](https://medlineplus.gov/genetics/), [NHS England Genomics Education](https://www.genomicseducation.hee.nhs.uk/), [ACOG](https://www.acog.org/womens-health/faqs/carrier-screening), [GECKO](https://www.geneticseducation.ca/a-guide-to-understanding-prenatal-screening-tests) e as publicações citadas em cada página. A presença de uma referência não substitui a conferência da tabela nem a revisão especializada do conteúdo.
+
+## Privacidade e acessibilidade
+
+Os campos da calculadora são processados no navegador, sem envio para uma API e sem analytics de saúde implementados pelo projeto. Fontes tipográficas são servidas junto com a aplicação.
+
+A idade, a opção de FIV e o número de bebês podem aparecer no fragmento do link, por exemplo `#idade=25&ovulo=doado`. Esse fragmento não é enviado na requisição HTTP, mas fica visível a quem receber o link. Datas de nascimento e parto não entram no endereço. O PNG exportado contém o contexto da idade mostrado no resultado.
+
+A interface inclui foco visível, controles por teclado, descrições das visualizações, tabela equivalente à curva e respeito a `prefers-reduced-motion`. A animação da página inicial permite pausa; o movimento ao passar o mouse é desativado em dispositivos de toque e quando há preferência por movimento reduzido.
+
+## Estrutura e tecnologias
+
+```text
+genetica-na-gestacao/
+├── .github/workflows/       # Integração contínua
+├── data/risco/              # Tabelas, fontes e status de conferência
+├── docs/                    # Imagens, design e planos
+└── web/
+    ├── public/              # Arquivos estáticos
+    ├── src/
+    │   ├── components/      # Elementos compartilhados e avisos
+    │   ├── content/         # Síndromes e afirmações em Markdown/MDX
+    │   ├── islands/         # Calculadora e visualizações React
+    │   ├── layouts/         # Estrutura das páginas
+    │   ├── lib/             # Cálculos, validação, links e exportação
+    │   ├── pages/           # Rotas Astro
+    │   └── styles/          # Tema e estilos responsivos
+    ├── tests/               # Testes unitários e de componentes
+    └── e2e/                 # Testes no navegador
+```
+
+**Astro + React + TypeScript**, conteúdo em Markdown/MDX, gráficos em SVG com D3, exportação por Canvas e tipografia Poppins. O resultado do build é estático, sem backend próprio.
+
+## Contribuir
+
+Issues e pull requests são bem-vindos. Descreva o problema ou a melhoria, mantenha as mudanças focadas e execute `npm run check` e `npm test`. Para alterações visuais, inclua a verificação no celular e por teclado.
+
+Alterações em conteúdo de saúde devem trazer referências verificáveis. Não remova os avisos de limite ou de conferência para fazer uma validação passar. Decisões anteriores estão documentadas em [`docs/plans/`](docs/plans/).
+
+Próximas etapas: concluir a conferência dos dados, obter revisão especializada e preparar a publicação de uma versão hospedada. Outras condições só devem entrar na calculadora com dados e limites documentados.
+
+## Licença
+
+Código e documentação original sob a [licença MIT](LICENSE). Bibliotecas, a fonte Poppins (SIL Open Font License) e materiais externos citados mantêm suas próprias licenças e direitos.
+
+Criado por [André Ruperto](https://andreruperto.dev).

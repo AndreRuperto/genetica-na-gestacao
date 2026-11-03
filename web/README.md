@@ -1,43 +1,38 @@
-# Astro Starter Kit: Minimal
+# Aplicação web — Genética na Gestação
 
-```sh
-npm create astro@latest -- --template minimal
+Frontend em Astro, React e TypeScript do site **Genética da Gravidez Explicada**.
+
+A documentação principal, com recursos, imagens, estado dos dados, privacidade e contribuição, está no [README da raiz](../README.md).
+
+## Início rápido
+
+Requer Node.js 22.23.4 ou superior. Execute nesta pasta:
+
+```bash
+npm ci
+npm run dev -- --background
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+Abra http://localhost:4321. No PowerShell, use `npm.cmd` se a execução de `npm.ps1` estiver bloqueada.
 
-## 🚀 Project Structure
+## Verificações
 
-Inside of your Astro project, you'll see the following folders and files:
-
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
+```bash
+npm run check
+npm test
 ```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+Para uma prévia com a tabela ainda em conferência, siga as instruções de [build de demonstração](../README.md#build-de-demonstração). O build de produção continua bloqueado enquanto os dados não forem conferidos.
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+Os testes de navegador usam Playwright; a instalação do Chromium e os comandos de acessibilidade estão descritos no README principal.
 
-Any static assets, like images, can be placed in the `public/` directory.
+## Onde alterar
 
-## 🧞 Commands
+- `src/pages/`: páginas e rotas.
+- `src/content/`: síndromes e mitos/verdades com fontes.
+- `src/islands/`: calculadora e visualizações React.
+- `src/lib/`: cálculo, validação e exportação de PNG.
+- `src/styles/`: tema e layout.
+- `../data/risco/`: dados e status de conferência.
 
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+Licença: [MIT](../LICENSE), com as ressalvas sobre materiais externos descritas na documentação principal.

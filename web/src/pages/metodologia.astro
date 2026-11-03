@@ -11,8 +11,7 @@ const tabela = tabelaSchema.parse(t21);
 const urlTabelaReproduzida = 'https://www.prenatalscreeningontario.ca/types-of-screening/chromosome-screening/chromosome-differences/chance-of-chromosome-differences-based-on-age/';
 const linhas = Object.entries(tabela.valores).map(([idade, n]) => ({ idade, n }));
 const data = new Date(tabela.atualizadoEm + 'T12:00:00').toLocaleDateString('pt-BR');
-// Endereço do repositório público, quando existir.
-const repositorio: string | undefined = undefined;
+const repositorio = 'https://github.com/AndreRuperto/genetica-na-gestacao';
 ---
 <Base titulo="Metodologia" descricao="De onde vêm os números, como são calculados e quais são os limites." amplo>
   <div class="pagina-referencia pagina-metodologia">
@@ -114,9 +113,8 @@ const repositorio: string | undefined = undefined;
         <p class="sobretitulo">06 / Código aberto</p>
         <h2 id="titulo-codigo-aberto">Código aberto</h2>
         <p>
-    {repositorio
-      ? <>O código do site e a tabela de risco estão em <a href={repositorio}>{repositorio}</a>.</>
-      : 'O código do site e a tabela de risco serão publicados em um repositório aberto.'}
+    O código do site e a tabela de risco estão no repositório público <a href={repositorio}>Genética na Gestação</a>,
+    com licença MIT para o código e a documentação original. Materiais externos mantêm suas próprias licenças.
   </p>
       </section>
       </div>

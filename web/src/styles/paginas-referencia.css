@@ -1,0 +1,124 @@
+.conteudo.pagina-ampla { max-width: var(--largura); }
+.pagina-referencia { min-width: 0; }
+.referencia-abertura { display: grid; grid-template-columns: minmax(0, 1fr) 15rem; align-items: center; gap: 4rem; padding: .5rem 0 3rem; }
+.referencia-abertura .sobretitulo { margin-bottom: 1.2rem; }
+.referencia-abertura h1 { font-size: clamp(2.5rem, 4.7vw, 4rem); line-height: 1.16; margin-bottom: 1.4rem; }
+.referencia-abertura h1 span { color: #a2bd90; }
+.referencia-abertura > div > p:last-child { color: var(--texto-suave); max-width: 40rem; font-size: .93rem; line-height: 1.95; margin: 0; }
+.referencia-resumo { border-left: 1px solid var(--borda); padding-left: 2rem; }
+.referencia-resumo__icone { display: inline-grid; place-items: center; width: 44px; height: 44px; color: var(--acao); background: #acd29e09; border: 1px solid #536d49; border-radius: 12px; margin-bottom: 1rem; }
+.referencia-resumo strong { display: block; font-size: 2.5rem; font-weight: 500; line-height: 1.2; letter-spacing: -.05em; }
+.referencia-resumo strong span { display: block; font-size: .78rem; letter-spacing: 0; color: var(--titulo); margin-top: .45rem; }
+.referencia-resumo > p { font-size: .7rem; line-height: 1.9; color: var(--texto-suave); margin: 1rem 0 0; }
+.referencia-divisor { display: flex; justify-content: space-between; gap: 1rem; align-items: baseline; border-top: 1px solid var(--borda); padding-top: 1.4rem; margin-bottom: 1.4rem; }
+.referencia-divisor h2 { font-size: 1.1rem; letter-spacing: -.02em; margin: 0; }
+.referencia-divisor > span { color: var(--texto-suave); font-size: .7rem; }
+.sindromes-grade { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.1rem; list-style: none; padding: 0; margin: 0; }
+.sindromes-grade > li { min-width: 0; display: flex; }
+.sindrome-cartao { display: flex; flex-direction: column; width: 100%; padding: 1.5rem; border: 1px solid #3f5442; border-radius: var(--raio); background: linear-gradient(145deg, #203025, #18241c); color: var(--texto); text-decoration: none; transition: border-color .2s, background .2s; }
+.sindrome-cartao:hover { border-color: #8da97c; background: #213326; }
+.sindrome-cartao:focus-visible { outline-offset: 4px; }
+.sindrome-cartao__topo { display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 1.4rem; }
+.sindrome-cartao__icone { display: grid; place-items: center; width: 42px; height: 44px; color: #bed7aa; border: 1px solid #526c49; border-radius: 10px; background: #acd29e08; }
+.sindrome-cartao__numero { color: #a2b599; font-size: .68rem; font-variant-numeric: tabular-nums; }
+.sindrome-cartao h3 { font-size: 1.18rem; line-height: 1.45; letter-spacing: -.025em; margin: 0 0 .5rem; }
+.sindrome-cartao__cariotipo { color: #c8d9b8; font-size: .68rem; line-height: 1.8; margin: 0 0 1rem; }
+.sindrome-cartao__resumo { color: var(--texto-suave); font-size: .78rem; line-height: 1.9; margin: 0 0 1.5rem; }
+.sindrome-cartao__link { display: flex; align-items: center; justify-content: space-between; gap: .7rem; margin-top: auto; padding-top: .9rem; border-top: 1px solid #8a9c7430; font-size: .72rem; color: #c3d8ad; }
+.referencia-nota { display: flex; align-items: flex-start; gap: 1.1rem; margin-top: 2rem; padding: 1.6rem; border: 1px solid var(--borda); border-radius: var(--raio); background: #acd29e04; }
+.referencia-nota > svg { color: var(--acao); margin-top: .2rem; }
+.referencia-nota h2 { font-size: 1rem; letter-spacing: -.02em; margin: 0 0 .5rem; }
+.referencia-nota p { color: var(--texto-suave); font-size: .78rem; margin: 0; max-width: 42rem; }
+.referencia-nota > a { display: flex; align-items: center; gap: .5rem; flex-shrink: 0; margin: .2rem 0 0 auto; font-size: .72rem; }
+.metodologia-layout { display: grid; grid-template-columns: 11rem minmax(0, 1fr); gap: 2.5rem; align-items: start; }
+.metodologia-indice { position: sticky; top: 2rem; }
+.metodologia-indice > p { font-size: .58rem; letter-spacing: .12em; color: #aabc9b; font-weight: 500; margin-bottom: 1rem; }
+.metodologia-indice ol { list-style: none; padding: 0; margin: 0; border-left: 1px solid var(--borda); }
+.metodologia-indice a { display: flex; align-items: baseline; gap: .65rem; padding: .65rem 0 .65rem 1rem; font-size: .72rem; text-decoration: none; color: var(--texto-suave); }
+.metodologia-indice a:hover { color: var(--acao); background: #acd29e06; }
+.metodologia-indice a span { font-size: .6rem; color: #a8c298; font-variant-numeric: tabular-nums; }
+.metodologia-corpo { display: grid; gap: 1.5rem; min-width: 0; }
+.metodologia-secao { min-width: 0; padding: 1.7rem; border: 1px solid var(--borda); border-radius: var(--raio); background: #18241c; scroll-margin-top: 2rem; }
+.metodologia-secao > .sobretitulo { font-size: .57rem; margin-bottom: .7rem; }
+.metodologia-secao h2 { font-size: 1.55rem; margin: 0 0 1.3rem; }
+.metodologia-secao p, .metodologia-secao li { font-size: .8rem; line-height: 1.95; color: #b8c5ae; }
+.metodologia-secao strong { color: var(--titulo); font-weight: 500; }
+.metodologia-secao a { overflow-wrap: anywhere; }
+.metodologia-secao > p:last-child { margin-bottom: 0; }
+.metodologia-passos { counter-reset: etapa; list-style: none; margin: 0; padding: 0; }
+.metodologia-passos li { counter-increment: etapa; position: relative; padding: 0 0 1.2rem 2.8rem; margin-bottom: 1.2rem; border-bottom: 1px solid var(--borda); }
+.metodologia-passos li::before { content: counter(etapa, decimal-leading-zero); position: absolute; top: .1rem; left: 0; display: grid; place-items: center; width: 1.8rem; height: 1.8rem; border: 1px solid #536d49; border-radius: 7px; color: #c8d9b8; font-size: .65rem; }
+.metodologia-passos li:last-child { border: 0; padding-bottom: 0; margin-bottom: 0; }
+.metodologia-cuidados { padding-left: 1.2rem; margin: 0; }
+.metodologia-cuidados li { padding-left: .35rem; margin-bottom: 1.1rem; }
+.metodologia-cuidados li::marker { color: var(--acao); }
+.metodologia-cuidados li:last-child { margin-bottom: 0; }
+.metodologia-fontes { list-style: none; margin: 0; padding: 0; }
+.metodologia-fontes li { padding: 1.1rem 0; border-top: 1px solid var(--borda); }
+.metodologia-fontes li:first-child { border-top: 0; padding-top: 0; }
+.metodologia-fontes li:last-child { padding-bottom: 0; }
+.metodologia-fontes h3 { font-size: .85rem; letter-spacing: -.01em; line-height: 1.8; margin: 0 0 .4rem; }
+.metodologia-fontes p { margin: 0; font-size: .75rem; }
+.metodologia-tabela { border: 1px solid var(--borda); border-radius: 10px; overflow: hidden; margin-top: 1.4rem; }
+.metodologia-tabela table { margin: 0; font-variant-numeric: tabular-nums; }
+.metodologia-tabela caption { text-align: left; padding: 1rem; font-size: .7rem; color: var(--texto-suave); }
+.metodologia-tabela th, .metodologia-tabela td { padding: .7rem 1rem; font-size: .75rem; }
+.metodologia-tabela tbody th { background: transparent; font-weight: 400; color: #b8c5ae; }
+.metodologia-tabela td:not(:first-child), .metodologia-tabela th:not(:first-child) { text-align: right; }
+.metodologia-tabela tbody tr:nth-child(even) { background: #acd29e04; }
+.metodologia-tabela tbody tr:hover { background: #acd29e0b; }
+.metodologia-tabela tbody tr:last-child > * { border-bottom: 0; }
+.metodologia-secao .fonte { font-size: .72rem; }
+.metodologia-secao .selo { font-size: .68rem; }
+.revisao-painel { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2rem; align-items: center; border-top: 1px solid var(--borda); padding-top: 1.4rem; }
+.revisao-informacao { display: flex; align-items: flex-start; gap: 1rem; min-width: 0; }
+.revisao-icone { display: grid; place-items: center; flex-shrink: 0; width: 46px; height: 48px; border: 1px solid #8c6a46; border-radius: 13px; color: #e9bc8d; background: #e9ac7408; }
+.revisao-status { display: inline-flex; align-items: center; gap: .45rem; border: 1px solid #8c6a46; border-radius: 6px; padding: .25rem .6rem; color: #edc69d; background: #e9ac7408; font-size: .68rem; line-height: 1.7; }
+.revisao-status > span { width: 5px; height: 5px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
+.metodologia-secao .revisao-informacao p { max-width: 38ch; margin: .7rem 0 0; font-size: .77rem; line-height: 1.9; color: var(--texto-suave); }
+.revisao-data { margin: 0; padding: .4rem 0 .4rem 1.6rem; border-left: 1px solid var(--borda); }
+.revisao-data dt { color: var(--texto-suave); font-size: .57rem; letter-spacing: .08em; text-transform: uppercase; }
+.revisao-data dd { margin: .4rem 0 0; color: var(--titulo); font-size: 1.15rem; font-weight: 500; font-variant-numeric: tabular-nums; letter-spacing: -.02em; }
+.revisao-painel--conferido .revisao-icone, .revisao-painel--conferido .revisao-status { color: #c6deb8; border-color: #60805a; background: #acd29e08; }
+@media (max-width: 600px) {
+  .revisao-painel { grid-template-columns: minmax(0, 1fr); gap: 1.3rem; }
+  .revisao-data { border-left: 0; border-top: 1px solid var(--borda); padding: 1rem 0 0; }
+  .revisao-icone { width: 39px; height: 41px; border-radius: 10px; }
+  .revisao-informacao { gap: .8rem; }
+}
+@media (max-width: 1000px) {
+  .sindromes-grade { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .metodologia-layout { grid-template-columns: 9.5rem minmax(0, 1fr); gap: 1.5rem; }
+  .referencia-nota { flex-wrap: wrap; }
+  .referencia-nota > div { flex: 1; min-width: 0; }
+  .referencia-nota > a { margin: 0 0 0 2.75rem; }
+}
+@media (max-width: 760px) {
+  .referencia-abertura { grid-template-columns: 1fr; gap: 1.8rem; padding-bottom: 2rem; }
+  .referencia-resumo { border-left: 0; border-top: 1px solid var(--borda); padding: 1.2rem 0 0; display: grid; grid-template-columns: auto 1fr; gap: .5rem 1rem; align-items: center; }
+  .referencia-resumo__icone { grid-row: span 2; margin-bottom: 0; }
+  .referencia-resumo strong { display: flex; align-items: baseline; gap: .7rem; font-size: 1.6rem; }
+  .referencia-resumo strong span { margin: 0; font-size: .72rem; }
+  .referencia-resumo > p { margin: 0; grid-column: 2; }
+  .metodologia-layout { grid-template-columns: minmax(0, 1fr); gap: 1.5rem; }
+  .metodologia-indice { position: static; }
+  .metodologia-indice > p { margin-bottom: .6rem; }
+  .metodologia-indice ol { display: flex; flex-wrap: wrap; gap: .45rem; border: 0; }
+  .metodologia-indice a { border: 1px solid var(--borda); border-radius: 7px; background: #18241c; padding: .55rem .75rem; font-size: .68rem; gap: .4rem; }
+}
+@media (max-width: 520px) {
+  .referencia-abertura h1 { font-size: clamp(2rem, 8.4vw, 2.8rem); }
+  .referencia-abertura .sobretitulo { font-size: .55rem; letter-spacing: .1em; }
+  .referencia-abertura > div > p:last-child { font-size: .84rem; }
+  .sindromes-grade { grid-template-columns: minmax(0, 1fr); gap: 1rem; }
+  .sindrome-cartao { padding: 1.3rem; }
+  .referencia-divisor { align-items: flex-start; }
+  .referencia-divisor > span { font-size: .62rem; padding-top: .2rem; }
+  .referencia-nota { padding: 1.2rem; }
+  .referencia-nota > a { margin-left: 0; }
+  .metodologia-secao { padding: 1.25rem; }
+  .metodologia-secao h2 { font-size: 1.35rem; }
+  .metodologia-tabela th, .metodologia-tabela td { padding: .6rem .55rem; font-size: .68rem; }
+  .metodologia-passos li { padding-left: 2.5rem; }
+}
+@media (prefers-reduced-motion: reduce) { .sindrome-cartao { transition: none; } }

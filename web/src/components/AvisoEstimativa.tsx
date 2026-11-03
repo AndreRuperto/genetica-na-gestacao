@@ -1,10 +1,11 @@
 export function AvisoEstimativa() {
   return (
     <aside role="note" className="aviso">
-      Esta é uma estimativa populacional baseada apenas na idade. O risco da sua gestação pode
-      ser refinado com exames de rastreio (ultrassom morfológico do 1º trimestre, NIPT) e
-      diagnóstico (biópsia de vilo corial, amniocentese). Converse com seu obstetra ou um
-      geneticista.
+      Esta é uma estimativa populacional baseada apenas na idade, para síndrome de Down ao nascimento em gestação única.
+      Não é diagnóstico, resultado de exame nem avaliação de todas as alterações cromossômicas.
+      O rastreio, como o teste pré-natal não invasivo (NIPT) e a avaliação do primeiro trimestre, refina a estimativa; não confirma o diagnóstico.
+      Exames diagnósticos, como biópsia de vilo corial e amniocentese, têm outra finalidade.
+      Converse com seu obstetra ou um geneticista sobre o seu caso.
     </aside>
   );
 }

@@ -1,26 +1,156 @@
 ---
 import Base from '../layouts/Base.astro';
 import Fonte from '../components/Fonte.astro';
+import Icone from '../components/Icone.astro';
+import { AvisoDados } from '../components/AvisoDados';
+import { GradeMilBebes } from '../islands/GradeMilBebes';
 import t21 from '@dados/risco/t21.json';
 import { umEmN, complemento } from '../lib/formatar';
 const v = t21.valores;
 const destaques = [
-  { valor: umEmN(v['25']), rotulo: 'risco de Down aos 25 anos' },
-  { valor: umEmN(v['35']), rotulo: 'aos 35 anos' },
-  { valor: umEmN(v['40']), rotulo: 'aos 40 anos' },
-  { valor: complemento(100 - 100 / v['45']), rotulo: 'chance de bebê sem Down aos 45' },
+  { idade: 'AOS 25 ANOS', valor: umEmN(v['25']), rotulo: 'chance de síndrome de Down' },
+  { idade: 'AOS 35 ANOS', valor: umEmN(v['35']), rotulo: 'chance de síndrome de Down' },
+  { idade: 'AOS 40 ANOS', valor: umEmN(v['40']), rotulo: 'chance de síndrome de Down' },
+  { idade: 'AOS 45 ANOS', valor: complemento(100 - 100 / v['45']), rotulo: 'chance de bebê sem síndrome de Down' },
+];
+const temas = [
+  { numero: '01', icone: 'dna' as const, titulo: 'Síndromes cromossômicas', texto: 'Entenda cada alteração, suas características e o que a ciência sabe sobre ela.', href: '/sindromes', link: 'Conhecer as síndromes', cor: 'verde' },
+  { numero: '02', icone: 'pergunta' as const, titulo: 'Mito ou verdade?', texto: 'Aos 35 anos tudo muda? Confira afirmações comuns, com explicação e fonte.', href: '/mito-ou-verdade', link: 'Esclarecer as dúvidas', cor: 'pessego' },
+  { numero: '03', icone: 'painel' as const, titulo: 'Painel genético', texto: 'Saiba o que o painel de portadores pode mostrar e quais são seus limites.', href: '/painel-genetico', link: 'Entender o painel', cor: 'lilas' },
 ];
 ---
-<Base titulo="Genética da Gravidez Explicada" descricao="Como a idade materna afeta o risco de trissomias, com números confiáveis, fontes e visualizações simples.">
-  <h1>Genética da Gravidez Explicada</h1>
-  <p>Como a idade materna muda a chance de alterações cromossômicas, explicado com números confiáveis e fonte para cada um.</p>
-  <ul class="destaques">
-    {destaques.map((d) => <li><strong>{d.valor}</strong><span>{d.rotulo}</span></li>)}
-  </ul>
-  <Fonte titulo="Morris & Wald (2007), risco ao nascimento, gestação única" url={t21.fonteUrl} />
-  <p><a href="/calculadora" class="botao">Veja o que a idade muda</a></p>
-  <nav aria-label="Seções">
-    <a href="/sindromes">Síndromes</a> · <a href="/mito-ou-verdade">Mito ou verdade</a> ·
-    <a href="/painel-genetico">Painel genético</a> · <a href="/metodologia">Metodologia</a>
-  </nav>
+<Base titulo="Genética da Gravidez Explicada" descricao="Entenda estimativas por idade para síndrome de Down ao nascimento, suas fontes e limitações." inicio>
+  <section class="hero" aria-labelledby="titulo-inicio">
+    <div class="hero-texto">
+      <p class="sobretitulo"><span class="ponto" aria-hidden="true"></span> CIÊNCIA COM CLAREZA E ACOLHIMENTO</p>
+      <h1 id="titulo-inicio">Entender a genética.<br />Viver a gravidez com <em>mais informação.</em></h1>
+      <p class="hero-descricao">Como a idade materna muda a chance de alterações cromossômicas? Explore os números, entenda o contexto e tire suas dúvidas, no seu tempo.</p>
+      <div class="hero-acoes">
+        <a href="/calculadora" class="botao">Veja o que a idade muda <Icone nome="seta" tamanho={19} /></a>
+        <a href="#explorar" class="link-discreto">Explorar os conteúdos <span aria-hidden="true">↘</span></a>
+      </div>
+      <p class="hero-nota"><Icone nome="escudo" tamanho={16} /> Sem cadastro. Seus dados ficam no seu navegador.</p>
+    </div>
+    <div class="hero-visual" data-cartao-animado>
+      <div class="orbita orbita-um" aria-hidden="true"></div>
+      <div class="orbita orbita-dois" aria-hidden="true"></div>
+      <span class="detalhe-dna" aria-hidden="true"><Icone nome="dna" tamanho={48} /></span>
+      <div class="previa-inclinacao">
+      <div class="previa-movimento">
+      <article class="previa">
+        <div class="previa-topo"><span class="sobretitulo">UM NÚMERO, MAIS CONTEXTO</span><span class="previa-simbolo"><Icone nome="dna" tamanho={19} /></span></div>
+        <p class="previa-idade">Exemplo: gestante com <strong>40 anos no parto</strong>, sem FIV</p>
+        <p class="previa-numero">{complemento(100 - 100 / v['40'])}<span>de chance de o bebê <strong>não ter</strong><br />síndrome de Down.</span></p>
+        <div class="previa-grade"><GradeMilBebes casos={Math.round(1000 / v['40'])} idadeTexto="40 anos" compacta animada /></div>
+        <p class="previa-contexto">Estimativa apenas para trissomia 21; não avalia a saúde do bebê como um todo.</p>
+        <div class="previa-fonte"><Fonte titulo="Morris & Wald (2007)" url={t21.fonteUrl} /><span>Ao nascimento · gestação única</span></div>
+      </article>
+      </div>
+      </div>
+      <span class="etiqueta-visual"><span aria-hidden="true">✳</span> Informação também é cuidado.</span>
+      <button class="animacao-controle" type="button" data-alternar-animacao hidden>
+        <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 5v10M13 5v10" /></svg>
+        <span>Pausar animação</span>
+      </button>
+    </div>
+  </section>
+
+  <div class="principios" aria-label="Sobre este projeto">
+    <span><Icone nome="livro" tamanho={19} /> Ciência em linguagem simples</span>
+    <span><Icone nome="escudo" tamanho={19} /> Fontes ao lado de cada número</span>
+    <span><Icone nome="dna" tamanho={19} /> Informação sem julgamentos</span>
+  </div>
+
+  <section class="numeros" aria-labelledby="titulo-numeros">
+    <div class="secao-cabecalho">
+      <div><p class="sobretitulo">COLOCANDO EM PERSPECTIVA</p><h2 id="titulo-numeros">A idade muda os números.<br /><span>O contexto muda a leitura.</span></h2></div>
+      <p>Idade da gestante no parto, sem FIV. Estimativas para síndrome de Down ao nascimento, em gestação única. Não são um diagnóstico.</p>
+    </div>
+    <ul class="destaques">
+      {destaques.map((d, i) => <li class:list={{ 'destaque-complemento': i === 3 }}><span class="destaque-idade">{d.idade}</span><strong>{d.valor}</strong><span class="destaque-rotulo">{d.rotulo}</span><span class="destaque-traco" aria-hidden="true"></span></li>)}
+    </ul>
+    <div class="numeros-fonte"><Fonte titulo="Morris & Wald (2007), risco ao nascimento, gestação única" url={t21.fonteUrl} /><a href="/metodologia">Como chegamos a esses números <span aria-hidden="true">↗</span></a></div>
+  </section>
+
+  <section id="explorar" class="explorar" aria-labelledby="titulo-explorar">
+    <div class="secao-cabecalho"><div><p class="sobretitulo">CONHECIMENTO, PASSO A PASSO</p><h2 id="titulo-explorar">Por onde você quer começar?</h2></div><p>Respostas claras para perguntas que fazem parte dessa jornada.</p></div>
+    <div class="temas">
+      {temas.map((tema) => <a href={tema.href} class={`tema tema-${tema.cor}`}><div class="tema-topo"><span class="tema-icone"><Icone nome={tema.icone} tamanho={27} /></span><span class="tema-numero">{tema.numero}</span></div><h3>{tema.titulo}</h3><p>{tema.texto}</p><span class="tema-link">{tema.link}<Icone nome="seta" tamanho={19} /></span></a>)}
+    </div>
+  </section>
+
+  <aside class="convite">
+    <span class="convite-icone"><Icone nome="livro" tamanho={29} /></span>
+    <div><h2>Conhecimento para uma conversa melhor.</h2><p>Use este espaço para se informar e levar suas dúvidas ao obstetra ou geneticista. Cada gestação tem sua própria história.</p></div>
+    <a class="botao botao-claro" href="/metodologia">Conheça nossas fontes <Icone nome="seta" tamanho={18} /></a>
+  </aside>
+  <AvisoDados conferido={t21.conferido} />
 </Base>
+
+<script>
+  const visual = document.querySelector<HTMLElement>('[data-cartao-animado]');
+  const controle = visual?.querySelector<HTMLButtonElement>('[data-alternar-animacao]');
+  if (visual && controle) {
+    const preferencia = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const mouseDisponivel = window.matchMedia('(hover: hover) and (pointer: fine)');
+    let visivel = false;
+    let iniciou = false;
+    let pausadaPelaPessoa = false;
+    let quadroPonteiro = 0;
+    let ponteiro: { x: number; y: number } | null = null;
+    const limparPonteiro = () => {
+      cancelAnimationFrame(quadroPonteiro);
+      quadroPonteiro = 0;
+      ponteiro = null;
+      delete visual.dataset.ponteiro;
+      for (const propriedade of ['--mouse-rx', '--mouse-ry', '--mouse-x', '--mouse-y', '--brilho-x', '--brilho-y']) {
+        visual.style.removeProperty(propriedade);
+      }
+    };
+    const sincronizar = () => {
+      controle.hidden = preferencia.matches || !iniciou;
+      visual.dataset.animacao = preferencia.matches ? 'reduzida' : !iniciou ? 'aguardando'
+        : pausadaPelaPessoa || !visivel || document.hidden ? 'pausada' : 'ativa';
+      controle.querySelector('span')!.textContent = pausadaPelaPessoa ? 'Retomar animação' : 'Pausar animação';
+      controle.querySelector('path')!.setAttribute('d', pausadaPelaPessoa ? 'M6 4l9 6-9 6Z' : 'M7 5v10M13 5v10');
+      if (visual.dataset.animacao !== 'ativa' || !mouseDisponivel.matches) limparPonteiro();
+    };
+    controle.addEventListener('click', () => {
+      pausadaPelaPessoa = !pausadaPelaPessoa;
+      sincronizar();
+    });
+    const observador = new IntersectionObserver(([entrada]) => {
+      visivel = entrada.isIntersecting;
+      if (visivel) iniciou = true;
+      sincronizar();
+    }, { threshold: .1 });
+    observador.observe(visual);
+    preferencia.addEventListener('change', sincronizar);
+    mouseDisponivel.addEventListener('change', sincronizar);
+    document.addEventListener('visibilitychange', sincronizar);
+    const atualizarPonteiro = () => {
+      quadroPonteiro = 0;
+      if (!ponteiro) return;
+      // A caixa externa fica estável enquanto o cartão inclina, evitando oscilações.
+      const caixa = visual.getBoundingClientRect();
+      const x = Math.max(-1, Math.min(1, (ponteiro.x - caixa.left) / caixa.width * 2 - 1));
+      const y = Math.max(-1, Math.min(1, (ponteiro.y - caixa.top) / caixa.height * 2 - 1));
+      visual.style.setProperty('--mouse-rx', `${(-y * 5).toFixed(2)}deg`);
+      visual.style.setProperty('--mouse-ry', `${(x * 7).toFixed(2)}deg`);
+      visual.style.setProperty('--mouse-x', `${(x * 8).toFixed(2)}px`);
+      visual.style.setProperty('--mouse-y', `${(y * 6).toFixed(2)}px`);
+      visual.style.setProperty('--brilho-x', `${((x + 1) * 50).toFixed(2)}%`);
+      visual.style.setProperty('--brilho-y', `${((y + 1) * 50).toFixed(2)}%`);
+      visual.dataset.ponteiro = 'ativo';
+    };
+    visual.addEventListener('pointermove', (evento) => {
+      if (evento.pointerType !== 'mouse' || !mouseDisponivel.matches || visual.dataset.animacao !== 'ativa') return;
+      ponteiro = { x: evento.clientX, y: evento.clientY };
+      if (!quadroPonteiro) quadroPonteiro = requestAnimationFrame(atualizarPonteiro);
+    });
+    visual.addEventListener('pointerleave', limparPonteiro);
+    visual.addEventListener('pointercancel', limparPonteiro);
+    window.addEventListener('blur', limparPonteiro);
+    sincronizar();
+  }
+</script>

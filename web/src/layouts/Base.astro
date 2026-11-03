@@ -1,8 +1,17 @@
 ---
 import '../styles/global.css';
-interface Props { titulo: string; descricao: string }
-const { titulo, descricao } = Astro.props;
+import Icone from '../components/Icone.astro';
+interface Props { titulo: string; descricao: string; inicio?: boolean; amplo?: boolean }
+const { titulo, descricao, inicio = false, amplo = false } = Astro.props;
 const nomeSite = 'Genética da Gravidez Explicada';
+const links = [
+  { href: '/', texto: 'Início' },
+  { href: '/sindromes', texto: 'Síndromes' },
+  { href: '/mito-ou-verdade', texto: 'Mito ou verdade' },
+  { href: '/painel-genetico', texto: 'Painel genético' },
+  { href: '/metodologia', texto: 'Metodologia' },
+];
+const ativo = (href: string) => href === '/' ? Astro.url.pathname === '/' : Astro.url.pathname.startsWith(href);
 ---
 <!doctype html>
 <html lang="pt-BR">
@@ -14,19 +23,31 @@ const nomeSite = 'Genética da Gravidez Explicada';
     <meta property="og:title" content={titulo} />
     <meta property="og:description" content={descricao} />
     <meta property="og:locale" content="pt_BR" />
+    <meta name="theme-color" content="#101814" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   </head>
   <body>
-    <header>
-      <nav aria-label="Principal">
-        <a href="/">Início</a> · <a href="/calculadora">O que a idade muda</a> ·
-        <a href="/sindromes">Síndromes</a> · <a href="/mito-ou-verdade">Mito ou verdade</a> ·
-        <a href="/painel-genetico">Painel genético</a> · <a href="/metodologia">Metodologia</a>
-      </nav>
+    <a class="pular-conteudo" href="#conteudo">Pular para o conteúdo</a>
+    <header class="cabecalho">
+      <div class="cabecalho-interno">
+        <a class="marca" href="/" aria-label="Genética da Gravidez Explicada — início">
+          <span class="marca-icone"><Icone nome="dna" tamanho={30} /></span>
+          <span>Genética da Gravidez<small>EXPLICADA</small></span>
+        </a>
+        <nav class="navegacao" aria-label="Principal">
+          {links.map(({ href, texto }) => <a href={href} aria-current={ativo(href) ? 'page' : undefined}>{texto}</a>)}
+        </nav>
+        <a href="/calculadora" class="botao botao-cabecalho" aria-current={ativo('/calculadora') ? 'page' : undefined}><Icone nome="calculadora" tamanho={17} /> Calculadora</a>
+      </div>
     </header>
-    <main><slot /></main>
-    <footer class="fonte">
-      Conteúdo educativo. Não é diagnóstico nem substitui consulta médica ou aconselhamento
-      genético. · <a href="https://andreruperto.dev">andreruperto.dev</a>
+    <main id="conteudo" class:list={['conteudo', { 'pagina-inicial': inicio, 'pagina-ampla': amplo }]}><slot /></main>
+    <footer class="rodape">
+      <div class="rodape-interno">
+        <a class="marca marca-rodape" href="/"><span class="marca-icone"><Icone nome="dna" /></span><span>Genética da Gravidez<small>EXPLICADA</small></span></a>
+        <p>Informação para entender.<br />Conhecimento para conversar.</p>
+        <a class="credito" href="https://andreruperto.dev">Um projeto de andreruperto.dev <span aria-hidden="true">↗</span></a>
+      </div>
+      <div class="rodape-aviso">Conteúdo educativo. Não é diagnóstico nem substitui consulta médica ou aconselhamento genético.</div>
     </footer>
   </body>
 </html>

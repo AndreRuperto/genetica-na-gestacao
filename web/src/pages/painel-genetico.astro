@@ -1,0 +1,75 @@
+---
+import Base from '../layouts/Base.astro';
+import Icone from '../components/Icone.astro';
+const chances = [
+  { valor: '25%', letras: 'AA', titulo: 'Sem a variante estudada', texto: 'Não tem a condição nem é portador, neste exemplo.', cor: 'neutro' },
+  { valor: '50%', letras: 'Aa ou aA', titulo: 'Portador, como os pais', texto: 'Tem uma cópia com a variante; em geral, sem sintomas.', cor: 'portador' },
+  { valor: '25%', letras: 'aa', titulo: 'Com a condição', texto: 'Recebe uma cópia com a variante de cada pessoa.', cor: 'condicao' },
+];
+---
+<Base titulo="Painel genético de portadores" descricao="Entenda o que o exame de portadores pesquisa, o exemplo de herança de 25% / 50% / 25% e os limites dos resultados.">
+  <div class="pagina-educativa pagina-portadores">
+    <header class="educacao-cabecalho">
+      <p class="sobretitulo"><Icone nome="painel" tamanho={17} /> ENTENDENDO OS EXAMES</p>
+      <h1>Painel genético<br /><span>de portadores</span></h1>
+      <p>Um exame para conhecer variantes que podem ser transmitidas aos filhos. Entenda o que ele pesquisa e como ler as chances de herança.</p>
+      <a class="atalho-educativo" href="#heranca">Entender o exemplo de herança <span aria-hidden="true">↓</span></a>
+    </header>
+
+    <section class="fundamentos-painel" aria-label="O essencial sobre o exame">
+      <article><span class="fundamento-icone"><Icone nome="dna" /></span><p class="mini-rotulo">QUEM É ANALISADO</p><h2>Quem fornece o óvulo<br />e o espermatozoide</h2><p>O painel investiga o DNA dessas pessoas. Não é um diagnóstico do bebê.</p></article>
+      <article><span class="fundamento-icone"><Icone nome="painel" /></span><p class="mini-rotulo">O QUE É PESQUISADO</p><h2>Variantes em genes<br />incluídos no exame</h2><p>O objetivo é identificar portadores de condições hereditárias pesquisadas naquele painel.</p></article>
+      <article><span class="fundamento-icone"><Icone nome="pergunta" /></span><p class="mini-rotulo">POR QUE PODE SURPREENDER</p><h2>Ser portador pode<br />não causar sintomas</h2><p>Nas condições autossômicas recessivas, uma cópia com a variante geralmente não causa a condição.</p></article>
+    </section>
+    <p class="fonte fonte-educativa">Referências: <a href="https://www.acog.org/womens-health/faqs/carrier-screening">ACOG — Carrier Screening</a> e <a href="https://medlineplus.gov/genetics/understanding/inheritance/inheritancepatterns/">MedlinePlus — padrões de herança</a>.</p>
+
+    <section id="heranca" class="secao-heranca" aria-labelledby="titulo-heranca">
+      <div class="heranca-introducao">
+        <p class="sobretitulo">UM EXEMPLO PARA VISUALIZAR</p>
+        <h2 id="titulo-heranca">Quando as duas pessoas<br />são portadoras.</h2>
+        <p>O quadro considera duas pessoas portadoras da <strong>mesma condição autossômica recessiva</strong>. Cada uma tem uma cópia do gene sem a variante estudada e outra com a variante.</p>
+        <div class="chave-genes"><span><b>A</b> Cópia sem a variante estudada</span><span><b>a</b> Cópia com a variante estudada</span></div>
+        <p class="heranca-ressalva"><Icone nome="livro" tamanho={18} /><span>Este é um modelo simplificado de um tipo de herança. As chances abaixo não se aplicam a todas as condições ou a todos os painéis.</span></p>
+      </div>
+      <div class="heranca-quadro">
+        <div class="quadro-cabecalho"><span class="mini-rotulo">QUATRO COMBINAÇÕES POSSÍVEIS</span><span class="cruzamento">Aa <i aria-hidden="true">×</i> Aa</span></div>
+        <table class="quadro-heranca">
+          <caption>Herança de uma condição autossômica recessiva: duas pessoas portadoras (Aa × Aa)</caption>
+          <thead><tr><td class="quadro-canto"><span>Cada pessoa<br />transmite uma cópia</span></td><th scope="col"><span>Óvulo</span><b>A</b></th><th scope="col"><span>Óvulo</span><b>a</b></th></tr></thead>
+          <tbody>
+            <tr><th scope="row"><span>Espermatozoide</span><b>A</b></th><td><div class="gene-celula gene-neutro"><strong>AA</strong><small>Sem a variante</small></div></td><td><div class="gene-celula gene-portador"><strong>Aa</strong><small>Portador</small></div></td></tr>
+            <tr><th scope="row"><span>Espermatozoide</span><b>a</b></th><td><div class="gene-celula gene-portador"><strong>aA</strong><small>Portador</small></div></td><td><div class="gene-celula gene-condicao"><strong>aa</strong><small>Com a condição</small></div></td></tr>
+          </tbody>
+        </table>
+        <p class="quadro-legenda">Cada célula do quadro tem a mesma chance de ocorrer: 1 em 4.</p>
+      </div>
+    </section>
+
+    <section class="chances-heranca" aria-label="Chances em cada gestação neste exemplo">
+      {chances.map((chance) => <article class={`chance-heranca chance-${chance.cor}`}><span class="chance-letras">{chance.letras}</span><p class="chance-valor">{chance.valor}</p><h3>{chance.titulo}</h3><p>{chance.texto}</p></article>)}
+    </section>
+    <div class="heranca-independente"><span class="independencia-icone"><Icone nome="escudo" tamanho={21} /></span><p><strong>As chances se repetem em cada gestação.</strong> O quadro não prevê quatro filhos nem garante um resultado de cada tipo. Um filho com ou sem a condição não determina o resultado do próximo.</p></div>
+    <p class="fonte fonte-educativa">Fontes do exemplo: <a href="https://www.genomicseducation.hee.nhs.uk/genotes/knowledge-hub/autosomal-recessive-inheritance/">NHS England — herança autossômica recessiva</a> e <a href="https://medlineplus.gov/genetics/understanding/inheritance/riskassessment/">MedlinePlus — chances em cada gestação</a>.</p>
+
+    <section class="alcance-painel" aria-labelledby="titulo-alcance">
+      <div class="educacao-secao-titulo"><p class="sobretitulo">CADA EXAME TEM UMA FINALIDADE</p><h2 id="titulo-alcance">O que o painel esclarece?</h2></div>
+      <div class="alcance-colunas">
+        <article class="alcance-cartao alcance-sim"><span class="alcance-simbolo"><Icone nome="check" /></span><h3>Pode identificar</h3><ul><li>Variantes associadas às condições incluídas no exame.</li><li>A condição de portador, mesmo sem sintomas.</li><li>Situações que merecem avaliação conjunta dos resultados das duas pessoas.</li></ul><p>Exemplos frequentes de pesquisa incluem fibrose cística, atrofia muscular espinhal e hemoglobinopatias.</p></article>
+        <article class="alcance-cartao alcance-nao"><span class="alcance-simbolo"><Icone nome="fechar" /></span><h3>Não responde sozinho</h3><ul><li>Se o bebê terá ou não uma condição.</li><li>O sexo do bebê ou o número de fetos.</li><li>Se há todas as possíveis alterações genéticas ou cromossômicas.</li></ul><p>O painel de portadores tem outra finalidade que os exames de avaliação de trissomias, como a síndrome de Down.</p></article>
+      </div>
+      <details class="painel-detalhes"><summary>Todos os painéis pesquisam a mesma coisa?</summary><p>Não. Há estratégias direcionadas, por ancestralidade, pan-étnicas e painéis expandidos. Os genes, as condições e as variantes pesquisadas variam conforme o exame e o laboratório.</p><p>Alguns painéis também incluem condições ligadas ao cromossomo X, com outro padrão de herança. O exemplo de 25% / 50% / 25% desta página é específico de herança autossômica recessiva.</p></details>
+    </section>
+
+    <section class="resultado-painel" aria-labelledby="titulo-laudo">
+      <div class="educacao-secao-titulo"><p class="sobretitulo">DEPOIS DO EXAME</p><h2 id="titulo-laudo">Como ler o resultado?</h2></div>
+      <ol class="passos-laudo">
+        <li><span aria-hidden="true">01</span><div><h3>Uma pessoa é portadora</h3><p>A equipe pode indicar a investigação da outra pessoa para a mesma condição. Ser portador, por si só, não é diagnóstico no bebê.</p></div></li>
+        <li><span aria-hidden="true">02</span><div><h3>As duas pessoas são portadoras</h3><p>A interpretação depende da condição e do padrão de herança. O aconselhamento genético ajuda a entender o significado dos resultados.</p></div></li>
+        <li><span aria-hidden="true">03</span><div><h3>O resultado foi negativo</h3><p>A chance de ser portador das condições pesquisadas diminui, mas não chega a zero. A chance que permanece é chamada de <strong>risco residual</strong>.</p></div></li>
+      </ol>
+      <p class="fonte fonte-educativa">Referências: <a href="https://www.acog.org/womens-health/faqs/carrier-screening">ACOG — Carrier Screening</a> e <a href="https://www.acog.org/clinical/clinical-guidance/committee-opinion/articles/2017/03/carrier-screening-in-the-age-of-genomic-medicine">ACOG — limites e risco residual</a>.</p>
+    </section>
+
+    <aside class="educacao-nota"><Icone nome="livro" tamanho={23} /><div><h2>Informação para conversar com sua equipe.</h2><p>A triagem pode ser discutida antes ou durante a gravidez. A indicação e a interpretação dependem do histórico e do exame. Este conteúdo educativo não substitui consulta ou aconselhamento genético.</p></div></aside>
+  </div>
+</Base>

@@ -7,9 +7,9 @@ import { umEmN, porcentagem } from '../lib/formatar';
 const L = 640, A = 320, M = { t: 24, r: 24, b: 40, l: 56 };
 const ANOTADAS = [25, 35, 40, 45];
 
-type Props = { tabela: Tabela; idade?: number };
+type Props = { tabela: Tabela; idade?: number; referenciaIdade?: string };
 
-export function CurvaRisco({ tabela, idade }: Props) {
+export function CurvaRisco({ tabela, idade, referenciaIdade = 'Idade da gestante na data prevista do parto' }: Props) {
   const pontos = Object.entries(tabela.valores).map(([i, n]) => ({ idade: Number(i), n, pct: 100 / n }));
   const x = scaleLinear().domain([21, 45]).range([M.l, L - M.r]);
   const y = scaleLog().domain([0.05, 4]).range([A - M.b, M.t]);
@@ -17,9 +17,10 @@ export function CurvaRisco({ tabela, idade }: Props) {
   const marcador = idade !== undefined ? risco(tabela, { idade }) : null;
 
   return (
-    <figure>
+    <figure className="curva-risco">
+      <figcaption><strong>Como a estimativa varia com a idade</strong><span>{referenciaIdade}. Chance de síndrome de Down ao nascimento, em gestação única. O eixo vertical usa escala logarítmica: distâncias iguais representam multiplicações da chance, não aumentos iguais em pontos percentuais.</span></figcaption>
       <svg viewBox={`0 0 ${L} ${A}`} width="100%" role="img"
-        aria-label="Curva do risco de síndrome de Down ao nascimento por idade materna, em escala logarítmica">
+        aria-label={`Curva do risco de síndrome de Down ao nascimento em escala logarítmica. Referência: ${referenciaIdade.toLowerCase()}.`}>
         {[0.1, 0.3, 1, 3].map((v) => (
           <g key={v}>
             <line x1={M.l} x2={L - M.r} y1={y(v)} y2={y(v)} stroke="var(--verde-100)" />
@@ -31,7 +32,7 @@ export function CurvaRisco({ tabela, idade }: Props) {
         {[21, 25, 30, 35, 40, 45].map((v) => (
           <text key={v} x={x(v)} y={A - M.b + 18} textAnchor="middle" fontSize="11">{v}</text>
         ))}
-        <text x={(L + M.l) / 2} y={A - 4} textAnchor="middle" fontSize="12">Idade materna no parto</text>
+        <text x={(L + M.l) / 2} y={A - 4} textAnchor="middle" fontSize="12">Idade de referência (anos)</text>
         <path d={d} fill="none" stroke="var(--verde-700)" strokeWidth={2.5} />
         {pontos.filter((p) => ANOTADAS.includes(p.idade)).map((p) => (
           <g key={p.idade}>
@@ -49,7 +50,8 @@ export function CurvaRisco({ tabela, idade }: Props) {
       <details>
         <summary>Ver como tabela</summary>
         <table>
-          <thead><tr><th scope="col">Idade</th><th scope="col">Risco</th><th scope="col">%</th></tr></thead>
+          <caption>{referenciaIdade} · estimativa ao nascimento</caption>
+          <thead><tr><th scope="col">Idade de referência</th><th scope="col">Chance de trissomia 21</th><th scope="col">%</th></tr></thead>
           <tbody>
             {pontos.map((p) => (
               <tr key={p.idade}><td>{p.idade}</td><td>{umEmN(p.n)}</td><td>{porcentagem(p.pct)}</td></tr>

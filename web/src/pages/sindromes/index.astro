@@ -1,13 +1,44 @@
 ---
 import Base from '../../layouts/Base.astro';
+import Icone from '../../components/Icone.astro';
+import '../../styles/paginas-referencia.css';
 import { getCollection } from 'astro:content';
 const lista = (await getCollection('sindromes')).sort((a, b) => a.data.ordem - b.data.ordem);
 ---
-<Base titulo="Síndromes cromossômicas" descricao="O que é cada alteração cromossômica e o que é correto dizer sobre ela.">
-  <h1>Síndromes cromossômicas</h1>
-  <ul>
-    {lista.map((s) => (
-      <li><a href={`/sindromes/${s.id}`}>{s.data.nome}</a> · {s.data.cariotipo}<br />{s.data.resumo}</li>
-    ))}
-  </ul>
+<Base titulo="Síndromes cromossômicas" descricao="O que é cada alteração cromossômica e o que é correto dizer sobre ela." amplo>
+  <div class="pagina-referencia pagina-sindromes">
+    <header class="referencia-abertura">
+      <div>
+        <p class="sobretitulo"><Icone nome="dna" tamanho={18} /> PARA ENTENDER OS CROMOSSOMOS</p>
+        <h1>Síndromes<br /><span>cromossômicas.</span></h1>
+        <p>Conheça cada alteração, entenda o que ela significa e encontre as fontes para aprofundar a leitura.</p>
+      </div>
+      <aside class="referencia-resumo" aria-label="Sobre este guia">
+        <span class="referencia-resumo__icone"><Icone nome="livro" tamanho={26} /></span>
+        <strong>{String(lista.length).padStart(2, '0')}<span>temas para conhecer</span></strong>
+        <p>Explicações em linguagem simples, com referências em cada página.</p>
+      </aside>
+    </header>
+
+    <div class="referencia-divisor"><h2>Explore os temas</h2><span>{lista.length} guias de leitura</span></div>
+    <ul class="sindromes-grade" role="list">
+      {lista.map((s, i) => (
+        <li>
+          <a class="sindrome-cartao" href={`/sindromes/${s.id}`} aria-labelledby={`nome-${s.id}`}>
+            <div class="sindrome-cartao__topo"><span class="sindrome-cartao__icone"><Icone nome="dna" tamanho={25} /></span><span class="sindrome-cartao__numero" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span></div>
+            <h3 id={`nome-${s.id}`}>{s.data.nome}</h3>
+            <p class="sindrome-cartao__cariotipo">{s.data.cariotipo}</p>
+            <p class="sindrome-cartao__resumo">{s.data.resumo}</p>
+            <span class="sindrome-cartao__link">Entender esta condição <Icone nome="seta" tamanho={18} /></span>
+          </a>
+        </li>
+      ))}
+    </ul>
+
+    <aside class="referencia-nota">
+      <Icone nome="livro" tamanho={25} />
+      <div><h2>Conhecer ajuda a fazer perguntas.</h2><p>Use este guia para entender os termos e preparar suas dúvidas para uma conversa com a equipe que acompanha a gestação.</p></div>
+      <a href="/metodologia">Conheça nossas fontes <Icone nome="seta" tamanho={17} /></a>
+    </aside>
+  </div>
 </Base>

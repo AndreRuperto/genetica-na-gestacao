@@ -21,3 +21,11 @@ test('tabela equivalente tem 25 linhas', () => {
   render(<CurvaRisco tabela={t21 as Tabela} />);
   expect(screen.getAllByRole('row', { hidden: true })).toHaveLength(26); // cabeçalho + 25
 });
+
+test('gráfico e tabela identificam a referência de idade usada na FIV', () => {
+  render(<CurvaRisco tabela={t21 as Tabela} idade={25} referenciaIdade="Idade de quem forneceu o óvulo na coleta" />);
+  expect(screen.getByRole('img')).toHaveAccessibleName(/coleta/);
+  expect(screen.getByRole('img')).not.toHaveAccessibleName(/idade materna/);
+  expect(screen.getByText(/distâncias iguais representam multiplicações/)).toBeInTheDocument();
+  expect(screen.getByText('Idade de quem forneceu o óvulo na coleta · estimativa ao nascimento')).toBeInTheDocument();
+});

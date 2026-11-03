@@ -1,19 +1,68 @@
 ---
 import Base from '../layouts/Base.astro';
+import Icone from '../components/Icone.astro';
 import { getCollection, render } from 'astro:content';
 const mitos = (await getCollection('mitos')).sort((a, b) => a.data.ordem - b.data.ordem);
 const itens = await Promise.all(mitos.map(async (m) => ({ m, Conteudo: (await render(m)).Content })));
+const totalMitos = mitos.filter((m) => m.data.veredito === 'Mito').length;
+const totalVerdades = mitos.length - totalMitos;
 ---
-<Base titulo="Mito ou verdade" descricao="Afirmações comuns sobre genética e gravidez, conferidas com fonte.">
-  <h1>Mito ou verdade</h1>
-  {itens.map(({ m, Conteudo }) => (
-    <article id={m.id} class="card-mito">
-      <h2><a href={`#${m.id}`}>{m.data.afirmacao}</a></h2>
-      <p class="selo">{m.data.veredito}</p>
-      <Conteudo />
-      <p class="fonte">Fonte: {m.data.fontes.map((f, i) => (
-        <>{i > 0 && ' · '}{f.url ? <a href={f.url}>{f.titulo}</a> : f.titulo}</>
-      ))}</p>
-    </article>
-  ))}
+<Base titulo="Mito ou verdade" descricao="Mitos e verdades sobre genética e gravidez, intercalados e explicados com fontes para cada afirmação.">
+  <div class="pagina-educativa pagina-mitos" data-pagina-mitos>
+    <header class="educacao-cabecalho mitos-cabecalho">
+      <p class="sobretitulo"><Icone nome="pergunta" tamanho={17} /> DÚVIDAS QUE MERECEM CONTEXTO</p>
+      <h1>Mito <span>ou verdade?</span></h1>
+      <p>Nem tudo o que se ouve sobre genética e gravidez está certo. Explore as afirmações, confira o veredito e entenda o porquê.</p>
+      <div class="mitos-resumo" aria-label="Conteúdo desta página"><span><b>{totalMitos}</b> mitos para esclarecer</span><span><b>{totalVerdades}</b> verdades para conhecer</span></div>
+    </header>
+    <div class="mitos-ferramentas">
+      <div class="mitos-filtros" role="group" aria-label="Filtrar afirmações" hidden data-filtros-mitos>
+        <button type="button" data-filtro="todos" aria-pressed="true">Todas <span>{mitos.length}</span></button>
+        <button type="button" data-filtro="Mito" aria-pressed="false"><Icone nome="fechar" tamanho={15} /> Mitos <span>{totalMitos}</span></button>
+        <button type="button" data-filtro="Verdade" aria-pressed="false"><Icone nome="check" tamanho={15} /> Verdades <span>{totalVerdades}</span></button>
+      </div>
+      <p class="mitos-contagem" role="status" aria-live="polite" data-contagem-mitos>{mitos.length} afirmações com explicação e fonte</p>
+    </div>
+    <div class="mitos-lista">
+      {itens.map(({ m, Conteudo }, i) => (
+        <article id={m.id} class={`afirmacao-cartao afirmacao-${m.data.veredito.toLowerCase()}`} data-veredito={m.data.veredito}>
+          <div class="afirmacao-topo"><span class={`veredito veredito-${m.data.veredito.toLowerCase()}`}><Icone nome={m.data.veredito === 'Verdade' ? 'check' : 'fechar'} tamanho={15} />{m.data.veredito}</span><a class="afirmacao-ancora" href={`#${m.id}`} aria-label={`Link para a afirmação ${i + 1}`}><span aria-hidden="true">#</span> {String(i + 1).padStart(2, '0')}</a></div>
+          <h2>{m.data.afirmacao}</h2>
+          <div class="afirmacao-explicacao"><Conteudo /></div>
+          <footer class="afirmacao-fontes"><span>FONTES PARA CONFERIR</span>{m.data.fontes.map((f) => f.url ? <a href={f.url} rel="noopener">{f.titulo} <span aria-hidden="true">↗</span></a> : <span>{f.titulo}</span>)}</footer>
+        </article>
+      ))}
+    </div>
+    <aside class="educacao-nota"><Icone nome="livro" tamanho={23} /><div><h2>Uma afirmação merece uma explicação.</h2><p>Os vereditos se referem às frases e ao contexto apresentados. Use as fontes para aprofundar a leitura e leve dúvidas sobre sua gestação à equipe que acompanha você.</p></div></aside>
+  </div>
 </Base>
+
+<script>
+  const pagina = document.querySelector<HTMLElement>('[data-pagina-mitos]');
+  if (pagina) {
+    const filtros = pagina.querySelector<HTMLElement>('[data-filtros-mitos]')!;
+    const botoes = [...filtros.querySelectorAll<HTMLButtonElement>('[data-filtro]')];
+    const cartoes = [...pagina.querySelectorAll<HTMLElement>('[data-veredito]')];
+    const contagem = pagina.querySelector<HTMLElement>('[data-contagem-mitos]')!;
+    const filtrar = (filtro: string) => {
+      let exibidos = 0;
+      for (const cartao of cartoes) {
+        cartao.hidden = filtro !== 'todos' && cartao.dataset.veredito !== filtro;
+        if (!cartao.hidden) exibidos++;
+      }
+      for (const botao of botoes) botao.setAttribute('aria-pressed', String(botao.dataset.filtro === filtro));
+      contagem.textContent = filtro === 'todos' ? `${exibidos} afirmações com explicação e fonte`
+        : `${exibidos} ${filtro === 'Mito' ? 'mitos' : 'verdades'} com explicação e fonte`;
+    };
+    for (const botao of botoes) botao.addEventListener('click', () => filtrar(botao.dataset.filtro!));
+    const mostrarAncora = () => {
+      let id: string;
+      try { id = decodeURIComponent(location.hash.slice(1)); } catch { return; }
+      const alvo = cartoes.find((cartao) => cartao.id === id);
+      if (alvo?.hidden) { filtrar('todos'); alvo.scrollIntoView({ block: 'start' }); }
+    };
+    window.addEventListener('hashchange', mostrarAncora);
+    filtros.hidden = false;
+    mostrarAncora();
+  }
+</script>

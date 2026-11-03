@@ -1,83 +1,126 @@
 ---
 import Base from '../layouts/Base.astro';
-import Revisao from '../components/Revisao.astro';
+import Icone from '../components/Icone.astro';
+import '../styles/paginas-referencia.css';
+import { AvisoDados } from '../components/AvisoDados';
 import t21 from '@dados/risco/t21.json';
 import { tabelaSchema } from '../lib/tabela';
 import { umEmN, porcentagem } from '../lib/formatar';
 
 const tabela = tabelaSchema.parse(t21);
+const urlTabelaReproduzida = 'https://www.prenatalscreeningontario.ca/types-of-screening/chromosome-screening/chromosome-differences/chance-of-chromosome-differences-based-on-age/';
 const linhas = Object.entries(tabela.valores).map(([idade, n]) => ({ idade, n }));
 const data = new Date(tabela.atualizadoEm + 'T12:00:00').toLocaleDateString('pt-BR');
 // Endereço do repositório público, quando existir.
 const repositorio: string | undefined = undefined;
 ---
-<Base titulo="Metodologia" descricao="De onde vêm os números, como são calculados e quais são os limites.">
-  <h1>Metodologia</h1>
-
-  <h2>De onde vêm os números</h2>
-  <table>
-    <thead><tr><th scope="col">Fonte</th><th scope="col">O que usamos</th></tr></thead>
-    <tbody>
-      <tr>
-        <td><a href={tabela.fonteUrl}>{tabela.fonte}</a></td>
-        <td>Risco de trissomia 21 ao nascimento por idade materna, de 21 a 45 anos. É a tabela da calculadora.</td>
-      </tr>
-      <tr>
-        <td>{tabela.reproduzidaEm}</td>
-        <td>Reprodução da tabela de Morris &amp; Wald usada para conferência.</td>
-      </tr>
-      <tr>
-        <td><a href="https://doi.org/10.1002/pd.2403">Savva, Walker &amp; Morris, Prenat Diagn 2010</a></td>
-        <td>Relação das trissomias 18 e 13 com a idade materna, citada nas páginas das síndromes. Ainda não entra na calculadora.</td>
-      </tr>
-      <tr>
-        <td>ACOG Committee Opinions 690 e 691 (2017)</td>
-        <td>Painel genético de portadores.</td>
-      </tr>
-      <tr>
-        <td>Fetal Medicine Foundation e MedlinePlus Genetics</td>
-        <td>Descrição das síndromes e das afirmações de mito ou verdade.</td>
-      </tr>
-    </tbody>
-  </table>
-
-  <h2>Como calculamos</h2>
-  <ul>
+<Base titulo="Metodologia" descricao="De onde vêm os números, como são calculados e quais são os limites." amplo>
+  <div class="pagina-referencia pagina-metodologia">
+    <header class="referencia-abertura">
+      <div>
+        <p class="sobretitulo"><Icone nome="livro" tamanho={18} /> FONTES, CRITÉRIOS E LIMITES</p>
+        <h1>Entenda os números.<br /><span>Conheça os limites.</span></h1>
+        <p>De onde vêm os dados, como a calculadora funciona e quais cuidados ajudam a interpretar cada resultado.</p>
+      </div>
+      <aside class="referencia-resumo" aria-label="Recorte da calculadora">
+        <span class="referencia-resumo__icone"><Icone nome="calculadora" tamanho={26} /></span>
+        <strong>21–45<span>anos na tabela de referência</span></strong>
+        <p>Trissomia 21 ao nascimento. Consulte abaixo as fontes e as limitações desse recorte.</p>
+      </aside>
+    </header>
+    <div class="metodologia-layout">
+      <nav class="metodologia-indice" aria-label="Nesta página">
+        <p>NESTA PÁGINA</p>
+        <ol role="list">
+          <li><a href="#fontes"><span>01</span>Fontes</a></li>
+          <li><a href="#calculos"><span>02</span>Cálculos</a></li>
+          <li><a href="#cuidados"><span>03</span>Cuidados</a></li>
+          <li><a href="#tabela-completa"><span>04</span>Tabela completa</a></li>
+          <li><a href="#revisao"><span>05</span>Revisão</a></li>
+          <li><a href="#codigo-aberto"><span>06</span>Código aberto</a></li>
+        </ol>
+      </nav>
+      <div class="metodologia-corpo">
+      <section class="metodologia-secao" id="fontes" aria-labelledby="titulo-fontes">
+        <p class="sobretitulo">01 / Fontes</p>
+        <h2 id="titulo-fontes">De onde vêm os números</h2>
+        <ul class="metodologia-fontes" role="list">
+      <li><h3><a href={tabela.fonteUrl}>{tabela.fonte}</a></h3><p>Risco de trissomia 21 ao nascimento por idade materna, de 21 a 45 anos. É a tabela da calculadora.</p></li>
+      <li><h3><a href={urlTabelaReproduzida}>{tabela.reproduzidaEm}</a></h3><p>Reprodução da tabela de Morris &amp; Wald usada para conferência.</p></li>
+      <li><h3><a href="https://doi.org/10.1002/pd.2403">Savva, Walker &amp; Morris, Prenat Diagn 2010</a></h3><p>Relação das trissomias 18 e 13 com a idade materna, citada nas páginas das síndromes. Ainda não entra na calculadora.</p></li>
+      <li><h3><a href="https://www.acog.org/clinical/clinical-guidance/committee-opinion/articles/2017/03/carrier-screening-in-the-age-of-genomic-medicine">ACOG Committee Opinion 690 (2017)</a> e <a href="https://www.acog.org/clinical/clinical-guidance/committee-opinion/articles/2017/03/carrier-screening-for-genetic-conditions">ACOG Committee Opinion 691 (2017)</a></h3><p>Painel genético de portadores.</p></li>
+      <li><h3><a href="https://fetalmedicine.org/fmf/FMF-English.pdf">Fetal Medicine Foundation (PDF)</a> e <a href="https://medlineplus.gov/genetics/condition/">MedlinePlus Genetics</a></h3><p>Descrição das síndromes e das afirmações de mito ou verdade.</p></li>
+    </ul>
+      </section>
+      <section class="metodologia-secao" id="calculos" aria-labelledby="titulo-calculos">
+        <p class="sobretitulo">02 / Cálculos</p>
+        <h2 id="titulo-calculos">Como calculamos</h2>
+        <ol class="metodologia-passos" role="list">
     <li><strong>Idade inteira:</strong> o valor vem direto da tabela, como "1 em N".</li>
     <li><strong>Idade com fração</strong> (calculada pelas datas): interpolação linear no logaritmo de N entre as duas idades vizinhas, porque a curva cresce de forma aproximadamente exponencial.</li>
     <li><strong>Porcentagem:</strong> 100 / N, com duas casas. A chance de não ter é 100 menos esse valor, com uma casa.</li>
     <li><strong>Grade de 1.000 bebês:</strong> o número de casos destacados é 1.000 / N, arredondado para o inteiro mais próximo.</li>
     <li>Fora de 21 a 45 anos não mostramos número, para não extrapolar a tabela.</li>
-  </ul>
-
-  <h2>Cuidados ao ler os números</h2>
-  <ul>
+  </ol>
+      </section>
+      <section class="metodologia-secao" id="cuidados" aria-labelledby="titulo-cuidados">
+        <p class="sobretitulo">03 / Cuidados</p>
+        <h2 id="titulo-cuidados">Cuidados ao ler os números</h2>
+        <ul class="metodologia-cuidados">
     <li><strong>Nascido vivo, não meio da gestação.</strong> Os valores são de risco ao nascimento. No primeiro e no segundo trimestre o risco é maior, porque parte das gestações com trissomia termina em perda espontânea antes do parto.</li>
     <li><strong>Idade na data prevista do parto.</strong> É a idade que a tabela usa, não a idade na concepção nem no dia de hoje.</li>
-    <li><strong>FIV e óvulo doado.</strong> O que conta é a idade de quem produziu o óvulo, na data da coleta. Por isso a calculadora troca a pergunta quando o óvulo é doado ou congelado.</li>
+    <li><strong>FIV e óvulo doado.</strong> Usamos como referência a idade de quem forneceu o óvulo na data da coleta, inclusive para óvulo próprio e fresco. Para óvulo doado, é a idade da doadora; para óvulo próprio congelado, é a idade na coleta, não a idade atual. A referência de coleta é registrada em <a href="https://www.dynacare.ca/DYN/media/DYN/Pdf/Print%20a%20Form/Conventional-Prenatal-Screening-Requisition-for-Trisomy-21-Trisomy-18-and-NTD_aoda.pdf">formulários de rastreamento pré-natal</a>. Aplicamos a mesma tabela populacional como aproximação; não é um modelo específico de FIV e não incorpora exames do embrião, como o teste genético pré-implantacional (PGT), nem exames da gestação.</li>
+    <li><strong>Troca da origem do óvulo.</strong> A idade é apagada ao trocar a opção para evitar reutilizar a idade da gestante como idade da doadora. Links com idade informada também preservam a opção de FIV e o número de bebês. Sem essas opções no link, a calculadora assume óvulo próprio, sem FIV, e gestação única. Datas de nascimento e parto não são incluídas no link.</li>
+    <li><strong>O que “sem síndrome de Down” significa.</strong> É apenas o complemento da chance de trissomia 21. Não significa ausência de outras condições, nem probabilidade de engravidar ou de a gestação chegar ao nascimento.</li>
     <li><strong>Gestação única.</strong> A tabela vale para um bebê. Gestações de gêmeos têm valores próprios, que a calculadora ainda não mostra.</li>
     <li><strong>Por que não usamos o SINASC na calculadora.</strong> O registro brasileiro de nascidos vivos depende de a anomalia ser reconhecida e anotada na declaração de nascimento, o que deixa casos de fora. Ele serve para descrever o Brasil, mas não para estimar o risco individual por idade.</li>
   </ul>
-
-  <h2>Tabela completa: trissomia 21 ao nascimento</h2>
-  <p class="fonte">
-    Fonte: <a href={tabela.fonteUrl}>{tabela.fonte}</a>, conforme {tabela.reproduzidaEm}. Atualizado em {data}.
+      </section>
+      <section class="metodologia-secao" id="tabela-completa" aria-labelledby="titulo-tabela-completa">
+        <p class="sobretitulo">04 / Tabela completa</p>
+        <h2 id="titulo-tabela-completa">Tabela completa: trissomia 21 ao nascimento</h2>
+        <p class="fonte">
+    Fonte: <a href={tabela.fonteUrl}>{tabela.fonte}</a>, conforme <a href={urlTabelaReproduzida}>{tabela.reproduzidaEm}</a>. Atualizado em {data}.
     {tabela.conferido
       ? ' Valores conferidos na publicação original.'
       : ' Valores ainda não conferidos na publicação original.'}
   </p>
-  <table>
-    <thead><tr><th scope="col">Idade</th><th scope="col">Risco</th><th scope="col">%</th></tr></thead>
-    <tbody>{linhas.map((l) => <tr><td>{l.idade}</td><td>{umEmN(l.n)}</td><td>{porcentagem(100 / l.n)}</td></tr>)}</tbody>
-  </table>
-
-  <h2>Revisão</h2>
-  <Revisao atualizadoEm={tabela.atualizadoEm} />
-
-  <h2>Código aberto</h2>
-  <p>
+  <div class="metodologia-tabela"><table>
+    <caption>Idade em anos na data prevista do parto · risco ao nascimento</caption>
+    <thead><tr><th scope="col">Idade</th><th scope="col">Risco</th><th scope="col">Porcentagem</th></tr></thead>
+    <tbody>{linhas.map((l) => <tr><th scope="row">{l.idade}</th><td>{umEmN(l.n)}</td><td>{porcentagem(100 / l.n)}</td></tr>)}</tbody>
+  </table></div>
+      </section>
+      <section class="metodologia-secao" id="revisao" aria-labelledby="titulo-revisao">
+        <p class="sobretitulo">05 / Revisão</p>
+        <h2 id="titulo-revisao">Revisão e atualização</h2>
+        <div class:list={['revisao-painel', { 'revisao-painel--conferido': tabela.conferido }]}>
+          <div class="revisao-informacao">
+            <span class="revisao-icone"><Icone nome={tabela.conferido ? 'check' : 'livro'} tamanho={24} /></span>
+            <div>
+              <span class="revisao-status"><span aria-hidden="true"></span>{tabela.conferido ? 'Valores conferidos' : 'Em revisão'}</span>
+              <p>{tabela.conferido
+                ? 'Os valores da tabela foram conferidos na publicação original.'
+                : 'A conferência dos valores da tabela na publicação original ainda está pendente.'}</p>
+            </div>
+          </div>
+          <dl class="revisao-data">
+            <dt>Última atualização</dt>
+            <dd><time datetime={tabela.atualizadoEm}>{data}</time></dd>
+          </dl>
+        </div>
+      </section>
+      <section class="metodologia-secao" id="codigo-aberto" aria-labelledby="titulo-codigo-aberto">
+        <p class="sobretitulo">06 / Código aberto</p>
+        <h2 id="titulo-codigo-aberto">Código aberto</h2>
+        <p>
     {repositorio
       ? <>O código do site e a tabela de risco estão em <a href={repositorio}>{repositorio}</a>.</>
       : 'O código do site e a tabela de risco serão publicados em um repositório aberto.'}
   </p>
+      </section>
+      </div>
+    </div>
+    <AvisoDados conferido={tabela.conferido} />
+  </div>
 </Base>

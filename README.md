@@ -1,10 +1,11 @@
 # Genética da Gravidez Explicada
 
-Site educativo que mostra, com números confiáveis e fonte para cada um, como a idade materna
-muda a chance de alterações cromossômicas na gestação.
+Site educativo em desenvolvimento sobre genética na gravidez, com estimativas por idade,
+fontes e limitações explícitas. A tabela ainda aguarda conferência na publicação original;
+os valores da demonstração não devem orientar decisões de saúde.
 
 **O que é:** material de divulgação científica em português, com uma calculadora que roda só no
-navegador, visualizações simples e textos revisados sobre síndromes cromossômicas.
+navegador, visualizações simples e textos com fontes e status de revisão sobre síndromes cromossômicas.
 
 **O que não é:** diagnóstico, exame ou aconselhamento genético. Os números são estimativas
 populacionais baseadas apenas na idade. O risco de uma gestação específica é refinado com exames
@@ -13,13 +14,16 @@ de rastreio e diagnóstico, junto com obstetra ou geneticista.
 ## O que já funciona
 
 - **Calculadora de trissomia 21** (`/calculadora`): idade da mãe na data prevista do parto, ou
-  cálculo pelas datas; óvulo próprio ou doado; aviso para gestação de gêmeos. Mostra uma grade de
+  cálculo pelas datas; FIV com óvulo próprio ou doado, fresco ou congelado (idade na coleta);
+  aviso sem estimativa para gestação de gêmeos. Mostra uma grade de
   1.000 bebês (com opção de baixar como PNG), o cartão "1 em N" com porcentagem e fonte, a curva
-  de risco em escala log e um aviso fixo. A idade fica no fragmento da URL (`#idade=38`), que o
-  navegador não envia ao servidor. Nada é coletado.
+  de risco em escala log e um aviso fixo. A idade, a opção de FIV e o número de bebês ficam no
+  fragmento da URL (ex.: `#idade=25&ovulo=doado`), que o navegador não envia ao servidor.
+  Datas não entram no link. Ao trocar a origem, a idade é apagada para evitar confusão.
+  A imagem exportada inclui referência da idade, arredondamento, fonte e aviso de conferência.
 - **Síndromes cromossômicas** (`/sindromes`): 9 páginas, cada uma com fonte e selo de revisão.
-- **Mito ou verdade** (`/mito-ou-verdade`): 7 afirmações com veredito e fonte, com âncoras
-  compartilháveis.
+- **Mito ou verdade** (`/mito-ou-verdade`): 10 afirmações (5 mitos e 5 verdades), intercaladas,
+  com explicação, fonte, filtros por veredito e âncoras compartilháveis.
 - **Painel genético** (`/painel-genetico`): o que o painel de portadores mostra e o que não mostra.
 - **Metodologia** (`/metodologia`): fontes, fórmula, cuidados e a tabela completa.
 

@@ -11,7 +11,7 @@ const tabela = tabelaSchema.parse(t21);
 const urlTabelaReproduzida = 'https://www.prenatalscreeningontario.ca/types-of-screening/chromosome-screening/chromosome-differences/chance-of-chromosome-differences-based-on-age/';
 const linhas = Object.entries(tabela.valores).map(([idade, n]) => ({ idade, n }));
 const data = new Date(tabela.atualizadoEm + 'T12:00:00').toLocaleDateString('pt-BR');
-const repositorio = 'https://github.com/TwoBrainCellsBrasil/genetica-na-gestacao';
+const repositorio = 'https://github.com/AndreRuperto/genetica-na-gestacao';
 ---
 <Base titulo="Metodologia" descricao="De onde vêm os números, como são calculados e quais são os limites." amplo>
   <div class="pagina-referencia pagina-metodologia">

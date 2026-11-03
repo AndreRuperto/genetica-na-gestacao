@@ -39,7 +39,7 @@ export function CurvaRisco({ tabela, idade, referenciaIdade = 'Idade da gestante
         {[21, 25, 30, 35, 40, 45].filter((v) => v >= x.domain()[0] && v <= x.domain()[1]).map((v) => (
           <text key={v} x={x(v)} y={A - M.b + 18} textAnchor="middle" fontSize="11">{v}</text>
         ))}
-        <text x={(L + M.l) / 2} y={A - 4} textAnchor="middle" fontSize="12">Idade de referência (anos)</text>
+        <text className="curva-eixo" x={(L + M.l) / 2} y={A - 4} textAnchor="middle" fontSize="12">Idade de referência (anos)</text>
         <path d={d} fill="none" stroke="var(--verde-700)" strokeWidth={2.5} />
         {pontos.filter((p) => ANOTADAS.includes(p.idade)).map((p) => (
           <g key={p.idade}>

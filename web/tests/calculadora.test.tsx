@@ -122,13 +122,21 @@ test('link de gêmeos não volta a mostrar estimativa para gestação única', (
   expect(screen.queryByRole('img', { name: /Curva do risco/ })).toBeNull();
 });
 
-test('expõe conferência pendente e rejeita idade manual com fração', () => {
+test('tabela T21 conferida mantém aviso clínico e rejeita idade manual com fração', () => {
   render(<Calculadora tabelas={[tabela]} />);
-  expect(screen.getByText('Dados em conferência.')).toBeInTheDocument();
+  expect(screen.queryByText('Dados em conferência.')).toBeNull();
+  expect(screen.getByRole('note')).toHaveTextContent(/estimativa populacional/);
   fireEvent.change(screen.getByRole('spinbutton'), { target: { value: '35.5' } });
   expect(resultado().getByText(/idade inteira/)).toBeInTheDocument();
   expect(resultado().queryByRole('img')).toBeNull();
   expect(screen.getByRole('spinbutton')).toHaveAttribute('aria-invalid', 'true');
+});
+
+test('a calculadora informa qual fonte conferiu a tabela T21', () => {
+  render(<Calculadora tabelas={[tabela]} />);
+  fireEvent.change(screen.getByRole('spinbutton'), { target: { value: '35' } });
+  expect(resultado().getByText('Tabela conferida com fonte institucional')).toBeInTheDocument();
+  expect(screen.getByRole('note')).toHaveTextContent(/Não é diagnóstico/);
 });
 
 test('trocar só o fragmento do link atualiza origem e sai do modo por datas', async () => {

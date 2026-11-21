@@ -3,7 +3,7 @@ afirmacao: "A síndrome de Turner não tem a mesma associação com a idade mate
 veredito: Verdade
 ordem: 8
 fontes:
-  - titulo: "Fetal Medicine Foundation — The 11–13+6 weeks scan"
+  - titulo: "Fetal Medicine Foundation — The 11–13+6 weeks scan (2004), p. 17"
     url: "https://fetalmedicine.org/fmf/FMF-English.pdf"
 ---
 A relação conhecida entre idade materna e trissomia 21 não deve ser estendida a toda alteração

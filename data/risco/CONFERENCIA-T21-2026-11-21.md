@@ -21,6 +21,13 @@
 | 35–39 | 403, 308, 231, 172, 129 | Iguais | 5/5 |
 | 40–45 | 98, 76, 61, 50, 43, 38 | Iguais | 6/6 |
 
+**Segunda conferência (21/11/2026):** os 25 valores também coincidem com a tabela de risco no termo
+publicada pelo software de rastreamento [αlpha](https://www.lmsalpha.co.uk/support/questions/age_risk),
+que usa a idade na data prevista do parto e cita Morris et al. 2002, as correções de 2005 e
+Morris & Wald 2007. As idades 25, 30, 35, 40 e 45 também coincidem com a tabela 3 do
+[GECKO](https://www.geneticseducation.ca/a-guide-to-understanding-prenatal-screening-tests).
+Detalhes em `docs/auditoria-fontes-2026-11-21.md`.
+
 **Limite da atribuição:** a reprodução institucional do PSO foi usada para comparar linha por linha. O artigo científico original foi identificado pelo título, periódico e DOI; **não se afirma uma comparação numérica independente com tabelas do PDF original**.
 
 ## O que esta auditoria valida — e o que não valida

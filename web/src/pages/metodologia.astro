@@ -11,6 +11,8 @@ const tabela = tabelaSchema.parse(t21);
 const urlTabelaReproduzida = 'https://www.prenatalscreeningontario.ca/types-of-screening/chromosome-screening/chromosome-differences/chance-of-chromosome-differences-based-on-age/';
 const linhas = Object.entries(tabela.valores).map(([idade, n]) => ({ idade, n }));
 const data = new Date(tabela.atualizadoEm + 'T12:00:00').toLocaleDateString('pt-BR');
+const verificacao = tabela.verificacao;
+const dataConferencia = verificacao ? new Date(verificacao.conferidoEm + 'T12:00:00').toLocaleDateString('pt-BR') : null;
 const repositorio = 'https://github.com/AndreRuperto/genetica-na-gestacao';
 ---
 <Base titulo="Metodologia" descricao="De onde vêm os números, como são calculados e quais são os limites." amplo>
@@ -45,7 +47,7 @@ const repositorio = 'https://github.com/AndreRuperto/genetica-na-gestacao';
         <h2 id="titulo-fontes">De onde vêm os números</h2>
         <ul class="metodologia-fontes" role="list">
       <li><h3><a href={tabela.fonteUrl}>{tabela.fonte}</a></h3><p>Risco de trissomia 21 ao nascimento por idade materna, de 21 a 45 anos. É a tabela da calculadora.</p></li>
-      <li><h3><a href={urlTabelaReproduzida}>{tabela.reproduzidaEm}</a></h3><p>Reprodução da tabela de Morris &amp; Wald usada para conferência.</p></li>
+      <li><h3><a href={urlTabelaReproduzida}>{tabela.reproduzidaEm}</a></h3><p>Tabela institucional usada para a conferência independente das 25 idades inteiras, de 21 a 45 anos. O programa informa que a tabela foi adaptada do estudo de Morris &amp; Wald.</p></li>
       <li><h3><a href="https://doi.org/10.1002/pd.2403">Savva, Walker &amp; Morris, Prenat Diagn 2010</a></h3><p>Relação das trissomias 18 e 13 com a idade materna, citada nas páginas das síndromes. Ainda não entra na calculadora.</p></li>
       <li><h3><a href="https://www.acog.org/clinical/clinical-guidance/committee-opinion/articles/2017/03/carrier-screening-in-the-age-of-genomic-medicine">ACOG Committee Opinion 690 (2017)</a> e <a href="https://www.acog.org/clinical/clinical-guidance/committee-opinion/articles/2017/03/carrier-screening-for-genetic-conditions">ACOG Committee Opinion 691 (2017)</a></h3><p>Painel genético de portadores.</p></li>
       <li><h3><a href="https://fetalmedicine.org/fmf/FMF-English.pdf">Fetal Medicine Foundation (PDF)</a> e <a href="https://medlineplus.gov/genetics/condition/">MedlinePlus Genetics</a></h3><p>Descrição das síndromes e das afirmações de mito ou verdade.</p></li>
@@ -56,7 +58,7 @@ const repositorio = 'https://github.com/AndreRuperto/genetica-na-gestacao';
         <h2 id="titulo-calculos">Como calculamos</h2>
         <ol class="metodologia-passos" role="list">
     <li><strong>Idade inteira:</strong> o valor vem direto da tabela, como "1 em N".</li>
-    <li><strong>Idade com fração</strong> (calculada pelas datas): interpolação linear no logaritmo de N entre as duas idades vizinhas, porque a curva cresce de forma aproximadamente exponencial.</li>
+    <li><strong>Idade com fração</strong> (calculada pelas datas): interpolação linear no logaritmo de N entre as duas idades vizinhas. É uma aproximação implementada no site; os valores fracionários não constam da tabela publicada.</li>
     <li><strong>Porcentagem:</strong> 100 / N, com duas casas. A chance de não ter é 100 menos esse valor, com uma casa.</li>
     <li><strong>Grade de 1.000 bebês:</strong> o número de casos destacados é 1.000 / N, arredondado para o inteiro mais próximo.</li>
     <li>Fora de 21 a 45 anos não mostramos número, para não extrapolar a tabela.</li>
@@ -68,7 +70,7 @@ const repositorio = 'https://github.com/AndreRuperto/genetica-na-gestacao';
         <ul class="metodologia-cuidados">
     <li><strong>Nascido vivo, não meio da gestação.</strong> Os valores são de risco ao nascimento. No primeiro e no segundo trimestre o risco é maior, porque parte das gestações com trissomia termina em perda espontânea antes do parto.</li>
     <li><strong>Idade na data prevista do parto.</strong> É a idade que a tabela usa, não a idade na concepção nem no dia de hoje.</li>
-    <li><strong>FIV e óvulo doado.</strong> Usamos como referência a idade de quem forneceu o óvulo na data da coleta, inclusive para óvulo próprio e fresco. Para óvulo doado, é a idade da doadora; para óvulo próprio congelado, é a idade na coleta, não a idade atual. A referência de coleta é registrada em <a href="https://www.dynacare.ca/DYN/media/DYN/Pdf/Print%20a%20Form/Conventional-Prenatal-Screening-Requisition-for-Trisomy-21-Trisomy-18-and-NTD_aoda.pdf">formulários de rastreamento pré-natal</a>. Aplicamos a mesma tabela populacional como aproximação; não é um modelo específico de FIV e não incorpora exames do embrião, como o teste genético pré-implantacional (PGT), nem exames da gestação.</li>
+    <li><strong>FIV e óvulo doado.</strong> Usamos como referência a idade de quem forneceu o óvulo na data da coleta, inclusive para óvulo próprio e fresco. Para óvulo doado, é a idade da doadora; para óvulo próprio congelado, é a idade na coleta, não a idade atual. A tabela do Prenatal Screening Ontario, por sua vez, especifica idade na <strong>data prevista do parto</strong>. Portanto, o uso da idade na coleta é apenas uma aproximação da aplicação, não validada como modelo específico para FIV ou óvulos doados, e não incorpora exames do embrião (como PGT) nem exames da gestação. A referência de coleta aparece em <a href="https://www.dynacare.ca/DYN/media/DYN/Pdf/Print%20a%20Form/Conventional-Prenatal-Screening-Requisition-for-Trisomy-21-Trisomy-18-and-NTD_aoda.pdf">formulários de rastreamento pré-natal</a>.</li>
     <li><strong>Troca da origem do óvulo.</strong> A idade é apagada ao trocar a opção para evitar reutilizar a idade da gestante como idade da doadora. Links com idade informada também preservam a opção de FIV e o número de bebês. Sem essas opções no link, a calculadora assume óvulo próprio, sem FIV, e gestação única. Datas de nascimento e parto não são incluídas no link.</li>
     <li><strong>O que “sem síndrome de Down” significa.</strong> É apenas o complemento da chance de trissomia 21. Não significa ausência de outras condições, nem probabilidade de engravidar ou de a gestação chegar ao nascimento.</li>
     <li><strong>Gestação única.</strong> A tabela vale para um bebê. Gestações de gêmeos têm valores próprios, que a calculadora ainda não mostra.</li>
@@ -79,10 +81,10 @@ const repositorio = 'https://github.com/AndreRuperto/genetica-na-gestacao';
         <p class="sobretitulo">04 / Tabela completa</p>
         <h2 id="titulo-tabela-completa">Tabela completa: trissomia 21 ao nascimento</h2>
         <p class="fonte">
-    Fonte: <a href={tabela.fonteUrl}>{tabela.fonte}</a>, conforme <a href={urlTabelaReproduzida}>{tabela.reproduzidaEm}</a>. Atualizado em {data}.
+    Origem científica: <a href={tabela.fonteUrl}>{tabela.fonte}</a>. Conferência linha a linha: <a href={urlTabelaReproduzida}>{tabela.reproduzidaEm}</a>. Dados atualizados em {data}.
     {tabela.conferido
-      ? ' Valores conferidos na publicação original.'
-      : ' Valores ainda não conferidos na publicação original.'}
+      ? ` Os ${verificacao?.totalLinhas} valores foram comparados com a tabela institucional em ${dataConferencia}. Isso não valida as aproximações nem a calculadora clinicamente.`
+      : ' Os valores ainda não foram integralmente conferidos com uma fonte institucional.'}
   </p>
   <div class="metodologia-tabela"><table>
     <caption>Idade em anos na data prevista do parto · risco ao nascimento</caption>
@@ -97,15 +99,16 @@ const repositorio = 'https://github.com/AndreRuperto/genetica-na-gestacao';
           <div class="revisao-informacao">
             <span class="revisao-icone"><Icone nome={tabela.conferido ? 'check' : 'livro'} tamanho={24} /></span>
             <div>
-              <span class="revisao-status"><span aria-hidden="true"></span>{tabela.conferido ? 'Valores conferidos' : 'Em revisão'}</span>
+              <span class="revisao-status"><span aria-hidden="true"></span>{tabela.conferido ? 'Tabela conferida com fonte institucional' : 'Em revisão'}</span>
               <p>{tabela.conferido
-                ? 'Os valores da tabela foram conferidos na publicação original.'
-                : 'A conferência dos valores da tabela na publicação original ainda está pendente.'}</p>
+                ? `Todos os ${verificacao?.totalLinhas} valores de idades inteiras foram cotejados com ${verificacao?.fonte} em ${dataConferencia}. A interpolação e o uso em FIV não foram validados.`
+                : 'A conferência integral dos valores em uma fonte institucional ainda está pendente.'}</p>
             </div>
           </div>
           <dl class="revisao-data">
             <dt>Última atualização</dt>
             <dd><time datetime={tabela.atualizadoEm}>{data}</time></dd>
+            {verificacao && <><dt>Conferência da tabela</dt><dd><time datetime={verificacao.conferidoEm}>{dataConferencia}</time></dd></>}
           </dl>
         </div>
       </section>

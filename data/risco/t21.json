@@ -3,7 +3,7 @@
   "nome": "Trissomia 21 (síndrome de Down)",
   "fonte": "Morris & Wald, J Med Screen 2007;14(1):5-7",
   "fonteUrl": "https://doi.org/10.1258/096914107780154549",
-  "reproduzidaEm": "BORN Ontario, Prevalence of Chromosome Differences",
+  "reproduzidaEm": "Prenatal Screening Ontario, Chance of Chromosome Differences Based on Age",
   "referencia": "nascido_vivo",
   "gestacao": "unica",
   "idade": "data_prevista_parto",

@@ -12,10 +12,23 @@ export const tabelaSchema = z
     idade: z.literal('data_prevista_parto'),
     atualizadoEm: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
     conferido: z.boolean(),
+    verificacao: z.object({
+      fonte: z.string().min(1),
+      fonteUrl: z.url(),
+      conferidoEm: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+      totalLinhas: z.number().int().positive(),
+      escopo: z.string().min(20),
+    }).optional(),
     valores: z.record(z.string().regex(/^\d+$/), z.number().int().positive()),
   })
   .superRefine((t, ctx) => {
     const idades = Object.keys(t.valores).map(Number).sort((a, b) => a - b);
+    if (t.conferido && !t.verificacao) {
+      ctx.addIssue({ code: 'custom', message: 'tabela conferida precisa de fonte e registro de verificação' });
+    }
+    if (t.conferido && t.verificacao && t.verificacao.totalLinhas !== idades.length) {
+      ctx.addIssue({ code: 'custom', message: 'total de linhas conferidas não corresponde à tabela' });
+    }
     for (let i = 1; i < idades.length; i++) {
       if (idades[i] !== idades[i - 1] + 1) {
         ctx.addIssue({ code: 'custom', message: `idade ${idades[i - 1] + 1} faltando` });

@@ -8,7 +8,7 @@
 Código do site **Genética da Gravidez Explicada**: uma experiência educativa em português que reúne calculadora de estimativas, visualizações e explicações sobre genética na gestação. Tema escuro, navegação por teclado e layouts para celular e desktop.
 
 > [!IMPORTANT]
-> **Demonstração educativa em desenvolvimento.** A tabela de risco ainda está marcada como `conferido: false`: os valores não foram integralmente conferidos na publicação original. Os números não devem orientar decisões de saúde. O projeto não é diagnóstico, exame ou aconselhamento genético.
+> **Projeto educativo, não ferramenta clínica.** Os 25 valores de trissomia 21 (21–45 anos) foram conferidos linha a linha com a tabela institucional do [Prenatal Screening Ontario](https://www.prenatalscreeningontario.ca/types-of-screening/chromosome-screening/chromosome-differences/chance-of-chromosome-differences-based-on-age/), adaptada de Morris & Wald (2007). Essa conferência valida a transcrição dos valores inteiros, **não a interpolação, o uso em FIV, exames ou decisões individuais de saúde**. Não houve revisão clínica independente do produto.
 
 ![Página inicial do projeto em tema escuro](docs/images/inicio.png)
 
@@ -85,7 +85,7 @@ A integração contínua executa verificação de tipos, testes, build de demons
 
 ### Build de demonstração
 
-O build de produção falha enquanto existir uma tabela não conferida. Para desenvolvimento, CI ou revisão visual, é possível gerar uma demonstração com aviso explícito:
+A tabela T21 agora tem verificação documentada e o **build padrão de produção pode rodar sem exceções**. Se outras tabelas não conferidas forem adicionadas, a proteção continua ativa. Só para desenvolvimento e revisão de tabelas futuras, é possível permitir um build de demonstração:
 
 ```bash
 PERMITIR_NAO_CONFERIDO=1 npm run build
@@ -109,15 +109,15 @@ O repositório inclui um [`Dockerfile`](Dockerfile) com build em Node.js e servi
 1. Conecte este repositório ao serviço, usando a branch `main`.
 2. Mantenha **Root Directory** na raiz do repositório (`/`), pois o build também precisa de `data/`. Usar apenas `/web` exclui esses dados.
 3. Deixe **Build Command** e **Start Command** sem substituições manuais. A configuração usa o Dockerfile para construir e iniciar o site.
-4. Enquanto os dados estiverem em conferência, adicione em **Variables**: `PERMITIR_NAO_CONFERIDO=1`. Isso publica uma **demonstração educativa**, mantendo os avisos da interface; não valida os dados.
+4. Para a única tabela atual (T21, verificada no PSO), **não é mais necessário configurar `PERMITIR_NAO_CONFERIDO=1`**. Se essa variável já existir, remova-a para manter o bloqueio de futuras tabelas não conferidas. A liberação do build não transforma o site em ferramenta clínica.
 5. Faça um novo deploy com o commit mais recente e gere o domínio público em **Networking**.
 
-Sem essa variável, o build continuará bloqueado enquanto houver tabelas não conferidas. Quando a conferência integral for concluída e registrada, remova a variável.
+O build continua bloqueado quando houver alguma tabela pendente sem registro rastreável de conferência. O aviso educacional da calculadora permanece mesmo com a T21 conferida.
 
 Para testar o mesmo container localmente, a partir da raiz:
 
 ```bash
-docker build --build-arg PERMITIR_NAO_CONFERIDO=1 -t genetica-na-gestacao .
+docker build -t genetica-na-gestacao .
 docker run --rm -p 8080:8080 genetica-na-gestacao
 ```
 
@@ -125,15 +125,15 @@ Abra http://localhost:8080. As rotas são servidas como páginas estáticas inde
 
 ## Dados, referências e limites
 
-Os valores ficam em [`data/risco/t21.json`](data/risco/t21.json), separados do código. O schema verifica números inteiros positivos, continuidade das idades e ordem dos valores.
+Os valores ficam em [`data/risco/t21.json`](data/risco/t21.json), separados do código. **As 25 linhas (21–45 anos) coincidem integralmente com a tabela pública do [Prenatal Screening Ontario](https://www.prenatalscreeningontario.ca/types-of-screening/chromosome-screening/chromosome-differences/chance-of-chromosome-differences-based-on-age/)**, que declara ser adaptada de Morris & Wald (2007). Os valores numéricos não precisaram de correção. Leia o [registro de auditoria](data/risco/CONFERENCIA-T21-2026-11-21.md), incluindo o escopo, as limitações e o teste de regressão. O schema verifica números inteiros positivos, continuidade, ordenação e metadados de conferência.
 
-O recorte atual é **trissomia 21 ao nascimento, em gestação única, para idades de referência entre 21 e 45 anos**. Não representa probabilidade de engravidar, resultado de exame ou avaliação de todas as condições de saúde. Na FIV, a idade na coleta é usada como aproximação para a mesma tabela populacional; não há um modelo específico de FIV ou incorporação de exames do embrião.
+O recorte atual é **trissomia 21 ao nascimento, em gestação única, para idades de referência entre 21 e 45 anos**. Não representa probabilidade de engravidar, resultado de exame ou avaliação de todas as condições de saúde. A tabela do PSO especifica idade **na data prevista do parto**. Na FIV, o site usa idade na coleta do óvulo como aproximação, **não validada clinicamente** contra essa fonte. Valores de idades fracionárias são interpolados pelo site, não publicados pelo PSO; exames e características individuais não entram no cálculo.
 
 Para atualizar uma tabela:
 
-1. Compare todos os valores com a publicação original e confira a população e o momento da estimativa.
-2. Registre a referência, o link e a data da conferência.
-3. Altere `conferido` para `true` somente após a conferência integral.
+1. Compare todos os valores com uma fonte institucional rastreável ou a publicação original e confira a população e o momento da estimativa.
+2. Registre fonte, URL, data, escopo e número de linhas no campo `verificacao`, distinguindo fonte original de reprodução institucional.
+3. Altere `conferido` para `true` somente após a comparação integral; inclua um teste de regressão independente.
 4. Execute as verificações e revise a explicação mostrada na interface.
 
 Fontes indicadas no projeto incluem [MedlinePlus Genetics](https://medlineplus.gov/genetics/), [NHS England Genomics Education](https://www.genomicseducation.hee.nhs.uk/), [ACOG](https://www.acog.org/womens-health/faqs/carrier-screening), [GECKO](https://www.geneticseducation.ca/a-guide-to-understanding-prenatal-screening-tests) e as publicações citadas em cada página. A presença de uma referência não substitui a conferência da tabela nem a revisão especializada do conteúdo.
@@ -175,7 +175,7 @@ Issues e pull requests são bem-vindos. Descreva o problema ou a melhoria, mante
 
 Alterações em conteúdo de saúde devem trazer referências verificáveis. Não remova os avisos de limite ou de conferência para fazer uma validação passar. Decisões anteriores estão documentadas em [`docs/plans/`](docs/plans/).
 
-Próximas etapas: concluir a conferência dos dados, obter revisão especializada e preparar a publicação de uma versão hospedada. Outras condições só devem entrar na calculadora com dados e limites documentados.
+Próximas etapas: obter **revisão clínica independente** das interpretações e das aproximações (principalmente FIV e idades fracionárias), e manter o monitoramento das fontes. A transcrição T21 já foi conferida, mas outras condições só devem entrar com dados, limites e auditoria documentados.
 
 ## Licença
 

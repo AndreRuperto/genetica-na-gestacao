@@ -187,9 +187,9 @@ export async function baixarImagem(svg: SVGSVGElement, dados: DadosImagem) {
   caixa(48, statusY, 984, statusAltura, 12, dados.conferido ? '#213320' : '#30271d',
     dados.conferido ? '#5f7954' : '#9f7851');
   ponto(69, statusY + 23, 4, dados.conferido ? cores.verde : cores.laranja);
-  texto(dados.conferido ? 'VALORES CONFERIDOS NA PUBLICAÇÃO ORIGINAL' : 'DADOS EM CONFERÊNCIA', 84, statusY + 13, 924, 17,
+  texto(dados.conferido ? 'TABELA CONFERIDA COM FONTE INSTITUCIONAL' : 'DADOS EM CONFERÊNCIA', 84, statusY + 13, 924, 17,
     dados.conferido ? cores.verde : '#f1c99e', 600);
-  if (!dados.conferido) texto('Valores ainda não conferidos na publicação original. Demonstração educativa; não use para decisões de saúde.',
+  if (!dados.conferido) texto('Tabela ainda não conferida com fonte institucional. Demonstração educativa; não use para decisões de saúde.',
     68, statusY + 40, 944, 18, '#dfc6a8', 400, 25);
   texto(aviso, 48, avisoY, 984, 18, cores.texto, 400, 27);
   linha(48, rodapeY - 10, 1032, rodapeY - 10);

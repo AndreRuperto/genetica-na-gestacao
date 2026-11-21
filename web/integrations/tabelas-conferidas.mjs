@@ -1,4 +1,4 @@
-// Falha o build de produção se alguma tabela de risco não foi conferida na fonte original.
+// Bloqueia o build de produção se qualquer tabela não tiver conferência documentada.
 // Builds de pré-visualização (CI, deploy preview) passam com PERMITIR_NAO_CONFERIDO=1.
 import { readdirSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
@@ -12,11 +12,15 @@ export default function tabelasConferidas() {
       'astro:build:start': ({ logger }) => {
         const pendentes = readdirSync(pasta)
           .filter((f) => f.endsWith('.json'))
-          .filter((f) => !JSON.parse(readFileSync(pasta + f, 'utf8')).conferido);
+          .filter((f) => {
+            const t = JSON.parse(readFileSync(pasta + f, 'utf8'));
+            return !t.conferido || !t.verificacao?.fonteUrl || !t.verificacao?.conferidoEm ||
+              t.verificacao?.totalLinhas !== Object.keys(t.valores || {}).length;
+          });
         if (pendentes.length === 0) return;
         const msg = `tabelas não conferidas: ${pendentes.join(', ')}`;
         if (process.env.PERMITIR_NAO_CONFERIDO === '1') logger.warn(msg);
-        else throw new Error(`${msg}. Confira na publicação original e marque "conferido": true.`);
+        else throw new Error(`${msg}. Confira em fonte rastreável, registre verificacao e só então marque "conferido": true.`);
       },
     },
   };

@@ -45,6 +45,7 @@ const repositorio = 'https://github.com/AndreRuperto/genetica-na-gestacao';
       <section class="metodologia-secao" id="fontes" aria-labelledby="titulo-fontes">
         <p class="sobretitulo">01 / Fontes</p>
         <h2 id="titulo-fontes">De onde vêm os números</h2>
+        <p><a href="/auditoria">Acesse a auditoria pública: 25 valores, fontes, histórico e limites.</a></p>
         <ul class="metodologia-fontes" role="list">
       <li><h3><a href={tabela.fonteUrl}>{tabela.fonte}</a></h3><p>Risco de trissomia 21 ao nascimento por idade materna, de 21 a 45 anos. É a tabela da calculadora.</p></li>
       <li><h3><a href={urlTabelaReproduzida}>{tabela.reproduzidaEm}</a></h3><p>Tabela institucional usada para a conferência independente das 25 idades inteiras, de 21 a 45 anos. O programa informa que a tabela foi adaptada do estudo de Morris &amp; Wald.</p></li>
@@ -58,10 +59,10 @@ const repositorio = 'https://github.com/AndreRuperto/genetica-na-gestacao';
         <h2 id="titulo-calculos">Como calculamos</h2>
         <ol class="metodologia-passos" role="list">
     <li><strong>Idade inteira:</strong> o valor vem direto da tabela, como "1 em N".</li>
-    <li><strong>Idade com fração</strong> (calculada pelas datas): interpolação linear no logaritmo de N entre as duas idades vizinhas. É uma aproximação implementada no site; os valores fracionários não constam da tabela publicada.</li>
+    <li><strong>Datas de nascimento e parto:</strong> calculamos a idade em <strong>anos completos</strong> na data prevista do parto, considerando aniversário e calendário. Consultamos somente a linha correspondente a essa idade inteira. Não interpolamos novos valores.</li>
     <li><strong>Porcentagem:</strong> 100 / N, com duas casas. A chance de não ter é 100 menos esse valor, com uma casa.</li>
     <li><strong>Grade de 1.000 bebês:</strong> o número de casos destacados é 1.000 / N, arredondado para o inteiro mais próximo.</li>
-    <li>Fora de 21 a 45 anos não mostramos número, para não extrapolar a tabela.</li>
+    <li>Fora de 21 a 45 anos, ou em idades fracionárias digitadas manualmente, não mostramos número, para não extrapolar nem interpolar a tabela.</li>
   </ol>
       </section>
       <section class="metodologia-secao" id="cuidados" aria-labelledby="titulo-cuidados">
@@ -70,8 +71,8 @@ const repositorio = 'https://github.com/AndreRuperto/genetica-na-gestacao';
         <ul class="metodologia-cuidados">
     <li><strong>Nascido vivo, não meio da gestação.</strong> Os valores são de risco ao nascimento. No primeiro e no segundo trimestre o risco é maior, porque parte das gestações com trissomia termina em perda espontânea antes do parto.</li>
     <li><strong>Idade na data prevista do parto.</strong> É a idade que a tabela usa, não a idade na concepção nem no dia de hoje.</li>
-    <li><strong>FIV e óvulo doado.</strong> Usamos como referência a idade de quem forneceu o óvulo na data da coleta, inclusive para óvulo próprio e fresco. Para óvulo doado, é a idade da doadora; para óvulo próprio congelado, é a idade na coleta, não a idade atual. A tabela do Prenatal Screening Ontario, por sua vez, especifica idade na <strong>data prevista do parto</strong>. Portanto, o uso da idade na coleta é apenas uma aproximação da aplicação, não validada como modelo específico para FIV ou óvulos doados, e não incorpora exames do embrião (como PGT) nem exames da gestação. A referência de coleta aparece em <a href="https://www.dynacare.ca/DYN/media/DYN/Pdf/Print%20a%20Form/Conventional-Prenatal-Screening-Requisition-for-Trisomy-21-Trisomy-18-and-NTD_aoda.pdf">formulários de rastreamento pré-natal</a>.</li>
-    <li><strong>Troca da origem do óvulo.</strong> A idade é apagada ao trocar a opção para evitar reutilizar a idade da gestante como idade da doadora. Links com idade informada também preservam a opção de FIV e o número de bebês. Sem essas opções no link, a calculadora assume óvulo próprio, sem FIV, e gestação única. Datas de nascimento e parto não são incluídas no link.</li>
+    <li><strong>FIV e óvulo doado:</strong> o site não fornece estimativa numérica nesses cenários, incluindo uso de óvulo congelado. A tabela institucional menciona idade da pessoa doadora na data prevista do parto, mas isso não valida diferentes protocolos de reprodução assistida nem permite inferir um risco individual sem dados clínicos. Mantemos apenas explicações educativas e fontes.</li>
+    <li><strong>Links e dados pessoais:</strong> ao selecionar FIV, a idade preenchida é descartada e nenhum resultado é exibido, inclusive ao abrir links antigos. O endereço pode conter apenas idade inteira e configuração de gestação única sem FIV; datas de nascimento e parto não entram no link.</li>
     <li><strong>O que “sem síndrome de Down” significa.</strong> É apenas o complemento da chance de trissomia 21. Não significa ausência de outras condições, nem probabilidade de engravidar ou de a gestação chegar ao nascimento.</li>
     <li><strong>Gestação única.</strong> A tabela vale para um bebê. Gestações de gêmeos têm valores próprios, que a calculadora ainda não mostra.</li>
     <li><strong>Por que não usamos o SINASC na calculadora.</strong> O registro brasileiro de nascidos vivos depende de a anomalia ser reconhecida e anotada na declaração de nascimento, o que deixa casos de fora. Ele serve para descrever o Brasil, mas não para estimar o risco individual por idade.</li>
@@ -83,7 +84,7 @@ const repositorio = 'https://github.com/AndreRuperto/genetica-na-gestacao';
         <p class="fonte">
     Origem científica: <a href={tabela.fonteUrl}>{tabela.fonte}</a>. Conferência linha a linha: <a href={urlTabelaReproduzida}>{tabela.reproduzidaEm}</a>. Dados atualizados em {data}.
     {tabela.conferido
-      ? ` Os ${verificacao?.totalLinhas} valores foram comparados com a tabela institucional em ${dataConferencia}. Isso não valida as aproximações nem a calculadora clinicamente.`
+      ? ` Os ${verificacao?.totalLinhas} valores foram comparados com a tabela institucional em ${dataConferencia}. O site usa apenas as idades inteiras publicadas, sem estimativa para FIV; a calculadora continua sem validação clínica.`
       : ' Os valores ainda não foram integralmente conferidos com uma fonte institucional.'}
   </p>
   <div class="metodologia-tabela"><table>
@@ -101,7 +102,7 @@ const repositorio = 'https://github.com/AndreRuperto/genetica-na-gestacao';
             <div>
               <span class="revisao-status"><span aria-hidden="true"></span>{tabela.conferido ? 'Tabela conferida com fonte institucional' : 'Em revisão'}</span>
               <p>{tabela.conferido
-                ? `Todos os ${verificacao?.totalLinhas} valores de idades inteiras foram cotejados com ${verificacao?.fonte} em ${dataConferencia}. A interpolação e o uso em FIV não foram validados.`
+                ? `Todos os ${verificacao?.totalLinhas} valores inteiros foram cotejados com ${verificacao?.fonte} em ${dataConferencia}. A interpolação foi retirada; FIV não gera resultado numérico. Revisão clínica externa pendente.`
                 : 'A conferência integral dos valores em uma fonte institucional ainda está pendente.'}</p>
             </div>
           </div>
@@ -115,6 +116,7 @@ const repositorio = 'https://github.com/AndreRuperto/genetica-na-gestacao';
       <section class="metodologia-secao" id="codigo-aberto" aria-labelledby="titulo-codigo-aberto">
         <p class="sobretitulo">06 / Código aberto</p>
         <h2 id="titulo-codigo-aberto">Código aberto</h2>
+        <p><a href="/auditoria">Ver página pública de auditoria</a> e <a href="https://github.com/AndreRuperto/genetica-na-gestacao/blob/main/docs/revisao-clinica-checklist.md">roteiro de revisão especializada</a>.</p>
         <p>
     O código do site e a tabela de risco estão no repositório público <a href={repositorio}>Genética na Gestação</a>,
     com licença MIT para o código e a documentação original. Materiais externos mantêm suas próprias licenças.

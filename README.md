@@ -8,7 +8,7 @@
 Código do site **Genética da Gravidez Explicada**: uma experiência educativa em português que reúne calculadora de estimativas, visualizações e explicações sobre genética na gestação. Tema escuro, navegação por teclado e layouts para celular e desktop.
 
 > [!IMPORTANT]
-> **Projeto educativo, não ferramenta clínica.** Os 25 valores de trissomia 21 (21–45 anos) foram conferidos linha a linha com a tabela institucional do [Prenatal Screening Ontario](https://www.prenatalscreeningontario.ca/types-of-screening/chromosome-screening/chromosome-differences/chance-of-chromosome-differences-based-on-age/), adaptada de Morris & Wald (2007). Essa conferência valida a transcrição dos valores inteiros, **não a interpolação, o uso em FIV, exames ou decisões individuais de saúde**. Não houve revisão clínica independente do produto.
+> **Projeto educativo, não ferramenta clínica.** Os 25 valores de trissomia 21 (21–45 anos) foram conferidos linha a linha com a tabela institucional do [Prenatal Screening Ontario](https://www.prenatalscreeningontario.ca/types-of-screening/chromosome-screening/chromosome-differences/chance-of-chromosome-differences-based-on-age/), adaptada de Morris & Wald (2007). Essa conferência valida a transcrição dos valores inteiros, **não o uso como ferramenta clínica**. Para evitar inferências, a aplicação deixou de interpolar idades e de calcular resultados para FIV. Não houve revisão clínica independente do produto.
 
 ![Página inicial do projeto em tema escuro](docs/images/inicio.png)
 
@@ -22,16 +22,17 @@ Código do site **Genética da Gravidez Explicada**: uma experiência educativa 
 | `/mito-ou-verdade` | Cinco mitos e cinco verdades, intercalados, com filtros e fontes |
 | `/painel-genetico` | O que o painel de portadores pesquisa, um exemplo de herança recessiva e limites do exame |
 | `/metodologia` | Fontes, fórmulas, tabela completa, limitações e conferência dos dados |
+| `/auditoria` | Histórico da auditoria, 25 valores, fontes e limites; revisão clínica externa pendente |
 
 ### Uma calculadora que explica o resultado
 
-- Informa de quem é a idade e qual data considerar: parto ou coleta do óvulo, conforme a opção selecionada.
-- Permite digitar a idade ou calculá-la pelas datas, no modo sem FIV.
+- No modo sem FIV, consulta somente a idade inteira da gestante na data prevista do parto; FIV apresenta informações educativas, sem estimativa.
+- Permite digitar idade inteira ou obtê-la pelas datas em anos completos, sem interpolação entre idades.
 - Apresenta a estimativa como **1 em N**, percentual e complemento, sem tratar o resultado como diagnóstico.
 - Representa 1.000 nascimentos hipotéticos e identifica o arredondamento dos pontos.
 - Exporta um infográfico com contexto da idade, fonte e aviso de conferência.
-- Preserva a configuração nos links e evita reaproveitar a idade ao mudar a origem do óvulo.
-- Exibe a indisponibilidade de estimativas para gestações múltiplas e para idades fora da tabela.
+- Mantém links com idades inteiras no modo sem FIV; links antigos de FIV não exibem estimativas e a troca de modo apaga a idade preenchida.
+- Não calcula FIV, gestações múltiplas, idades fracionárias ou idades fora da faixa publicada.
 
 ![Exemplo do painel de resultado da calculadora, com números e grade de pontos](docs/images/calculadora.png)
 
@@ -81,7 +82,7 @@ Para os testes de navegador, instale o Chromium do Playwright uma vez:
 npx playwright install chromium
 ```
 
-A integração contínua executa verificação de tipos, testes, build de demonstração e testes de acessibilidade a cada push e pull request. Consulte o [workflow de CI](.github/workflows/ci.yml).
+A integração contínua executa verificação de tipos, testes, build normal de produção e testes de acessibilidade a cada push e pull request. Consulte o [workflow de CI](.github/workflows/ci.yml).
 
 ### Build de demonstração
 
@@ -127,7 +128,7 @@ Abra http://localhost:8080. As rotas são servidas como páginas estáticas inde
 
 Os valores ficam em [`data/risco/t21.json`](data/risco/t21.json), separados do código. **As 25 linhas (21–45 anos) coincidem integralmente com a tabela pública do [Prenatal Screening Ontario](https://www.prenatalscreeningontario.ca/types-of-screening/chromosome-screening/chromosome-differences/chance-of-chromosome-differences-based-on-age/)**, que declara ser adaptada de Morris & Wald (2007). Os valores numéricos não precisaram de correção. Leia o [registro de auditoria](data/risco/CONFERENCIA-T21-2026-11-21.md), incluindo o escopo, as limitações e o teste de regressão. O schema verifica números inteiros positivos, continuidade, ordenação e metadados de conferência.
 
-O recorte atual é **trissomia 21 ao nascimento, em gestação única, para idades de referência entre 21 e 45 anos**. Não representa probabilidade de engravidar, resultado de exame ou avaliação de todas as condições de saúde. A tabela do PSO especifica idade **na data prevista do parto**. Na FIV, o site usa idade na coleta do óvulo como aproximação, **não validada clinicamente** contra essa fonte. Valores de idades fracionárias são interpolados pelo site, não publicados pelo PSO; exames e características individuais não entram no cálculo.
+O recorte atual é **trissomia 21 ao nascimento, em gestação única, para idades de referência entre 21 e 45 anos**. Não representa probabilidade de engravidar, resultado de exame ou avaliação de todas as condições de saúde. A tabela do PSO especifica idade **na data prevista do parto**. Na FIV ou com óvulos doados/congelados, **não há estimativa numérica**: o modo é apenas informativo. Idades fracionárias não são interpoladas; se a idade for obtida a partir de duas datas, são usados os anos completos na data prevista do parto. Exames e características individuais não entram na consulta.
 
 Para atualizar uma tabela:
 
@@ -142,7 +143,7 @@ Fontes indicadas no projeto incluem [MedlinePlus Genetics](https://medlineplus.g
 
 Os campos da calculadora são processados no navegador, sem envio para uma API e sem analytics de saúde implementados pelo projeto. Fontes tipográficas são servidas junto com a aplicação.
 
-A idade, a opção de FIV e o número de bebês podem aparecer no fragmento do link, por exemplo `#idade=25&ovulo=doado`. Esse fragmento não é enviado na requisição HTTP, mas fica visível a quem receber o link. Datas de nascimento e parto não entram no endereço. O PNG exportado contém o contexto da idade mostrado no resultado.
+O link pode conter a idade inteira e o número de bebês, por exemplo `#idade=25`, para o modo sem FIV. **Novos links de FIV com números não são gerados**, e links antigos de FIV não produzem estimativa. O fragmento não é enviado na requisição HTTP, mas pode ser visto por quem receber o link. Datas de nascimento e parto não entram no endereço. O PNG exportado mantém o contexto da idade de referência.
 
 A interface inclui foco visível, controles por teclado, descrições das visualizações, tabela equivalente à curva e respeito a `prefers-reduced-motion`. A animação da página inicial permite pausa; o movimento ao passar o mouse é desativado em dispositivos de toque e quando há preferência por movimento reduzido.
 
@@ -175,7 +176,7 @@ Issues e pull requests são bem-vindos. Descreva o problema ou a melhoria, mante
 
 Alterações em conteúdo de saúde devem trazer referências verificáveis. Não remova os avisos de limite ou de conferência para fazer uma validação passar. Decisões anteriores estão documentadas em [`docs/plans/`](docs/plans/).
 
-Próximas etapas: obter **revisão clínica independente** das interpretações e das aproximações (principalmente FIV e idades fracionárias), e manter o monitoramento das fontes. A transcrição T21 já foi conferida, mas outras condições só devem entrar com dados, limites e auditoria documentados.
+Próximas etapas: obter **revisão clínica independente** dos textos e visualizações, usando o [roteiro de revisão](docs/revisao-clinica-checklist.md). A [auditoria pública](https://genetica-na-gestacao.up.railway.app/auditoria) informa o escopo conferido e as pendências. Qualquer retorno a estimativas de FIV, idades fracionárias ou outras condições exige fonte adequada, justificativa metodológica e revisão especializada.
 
 ## Licença
 

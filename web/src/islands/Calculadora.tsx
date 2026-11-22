@@ -59,17 +59,18 @@ export function Calculadora({ tabelas }: Props) {
   const textos = CONDICOES[tabela.condicao];
   const usaDatas = pelasDatas && ovulo === 'proprio';
   const idade = usaDatas ? idadePorDatas(nascimento, dataParto) : idadeTexto === '' ? Number.NaN : Number(idadeTexto);
+  // Sem modelo específico para FIV/doação de óvulos: não exibir números.
   const r = bebes > 1 ? { tipo: 'gemeos' as const }
-    : !usaDatas && !Number.isInteger(idade) ? { tipo: 'invalido' as const }
+    : ovulo === 'doado' ? { tipo: 'sem-modelo-fiv' as const }
     : risco(tabela, { idade, bebes });
   const [idadeMinTabela, idadeMaxTabela] = faixaDaTabela(tabela);
 
   useEffect(() => {
-    const h = usaDatas ? '' : hashDaIdade(idade, ovulo, bebes, tabela.condicao);
+    const h = ovulo === 'doado' || usaDatas ? '' : hashDaIdade(idade, ovulo, bebes, tabela.condicao);
     history.replaceState(null, '', location.pathname + h);
   }, [idade, usaDatas, ovulo, bebes, tabela.condicao]);
 
-  const rotuloIdade = ovulo === 'doado' ? 'Idade na data da coleta do óvulo' : 'Idade da mãe na data prevista do parto';
+  const rotuloIdade = 'Idade da mãe na data prevista do parto';
   const ref25 = tabela.valores['25'] as number | undefined;
   const idadeExibida = new Intl.NumberFormat('pt-BR', { maximumFractionDigits: 2 }).format(idade);
   const referenciaIdade = ovulo === 'doado' ? 'Idade de quem forneceu o óvulo na coleta' : 'Idade da gestante na data prevista do parto';
@@ -103,7 +104,7 @@ export function Calculadora({ tabelas }: Props) {
             <label className="opcao-cartao">
               <input type="radio" name={`${id}-ovulo`} checked={ovulo === 'doado'} onChange={() => trocarOrigem('doado')} />
               <span className="opcao-icone"><IconeCampo tipo="frio" /></span>
-              <span className="opcao-texto"><strong>FIV: próprio ou doado</strong><small>Fresco ou congelado: idade na coleta</small></span>
+              <span className="opcao-texto"><strong>FIV: próprio ou doado</strong><small>Orientações educativas, sem estimativa numérica</small></span>
             </label>
           </div>
         </fieldset>
@@ -111,10 +112,12 @@ export function Calculadora({ tabelas }: Props) {
         <fieldset className="etapa-campo etapa-idade">
           <legend><span className="etapa-numero" aria-hidden="true">02</span> {usaDatas ? 'Datas da gestação' : 'Idade de referência'}</legend>
           <p className="contexto-idade" id={`${id}-referencia`}>
-            {ovulo === 'doado' ? <><strong>De quem é a idade?</strong> Da pessoa que forneceu o óvulo, no dia da coleta. Se o óvulo é seu, use sua idade naquela data; se é doado, use a idade da doadora. Exemplo: gestante com 45 anos e doadora com 25 na coleta → informe 25. A idade atual da gestante não entra nesta estimativa.</>
-              : <>Informe quantos anos a gestante terá na data prevista do parto, que pode ser diferente da idade de hoje. Se houve FIV, selecione a outra opção, inclusive para óvulo próprio.</>}
+            {ovulo === 'doado' ? <><strong>Não solicitamos uma idade para calcular FIV.</strong> A fonte apresenta valores populacionais por idade prevista no parto e identifica pessoas doadoras, mas não valida um cálculo individual para diferentes protocolos, óvulos congelados ou resultados de exames. Consulte a <a href="/metodologia">metodologia</a>.</>
+              : <>Informe a idade em <strong>anos completos</strong> que a gestante terá na data prevista do parto. Se houve FIV, selecione a outra opção.</>}
           </p>
-          {usaDatas ? (
+          {ovulo === 'doado' ? (
+            <p className="aviso">Neste modo educativo não exibimos chance numérica. Uma avaliação individual exige informações e interpretação de profissionais qualificados.</p>
+          ) : usaDatas ? (
             <div className="campos-datas">
               <label htmlFor={`${id}-nascimento`}><span><IconeCampo tipo="calendario" /> Data de nascimento da mãe</span><input id={`${id}-nascimento`} type="date" value={nascimento} onChange={(e) => setNascimento(e.target.value)} /></label>
               <label htmlFor={`${id}-parto`}><span><IconeCampo tipo="calendario" /> Data prevista do parto</span><input id={`${id}-parto`} type="date" value={dataParto} onChange={(e) => setDataParto(e.target.value)} /></label>
@@ -133,7 +136,7 @@ export function Calculadora({ tabelas }: Props) {
             <label className="alternar-datas">
               <input className="alternar-input" type="checkbox" checked={pelasDatas} onChange={(e) => setPelasDatas(e.target.checked)} />
               <span className="alternar-trilho" aria-hidden="true"><span /></span>
-              <span><strong>Calcular pelas datas</strong><small>Use o nascimento e a previsão do parto</small></span>
+              <span><strong>Calcular idade pelas datas</strong><small>Usa anos completos na data prevista do parto</small></span>
               <span className="alternar-calendario"><IconeCampo tipo="calendario" /></span>
             </label>
           )}
@@ -161,7 +164,8 @@ export function Calculadora({ tabelas }: Props) {
       )}
 
       <section aria-label="Resultado" aria-live="polite">
-        {r.tipo === 'invalido' && <p className="resultado-pendente">{usaDatas ? (nascimento && dataParto ? 'Confira as datas: o parto deve ser posterior ao nascimento da mãe, com idade entre 18 e 50 anos.' : 'Preencha as duas datas para visualizar a estimativa.') : idadeTexto === '' ? `Para visualizar a estimativa, informe: ${rotuloIdade.toLowerCase()}.` : 'Digite uma idade inteira entre 18 e 50 anos. Só mostramos estimativas dentro da faixa da tabela.'}</p>}
+        {r.tipo === 'sem-modelo-fiv' && <p className="aviso" role="status">Para FIV, uso de óvulos congelados ou doados, esta ferramenta não apresenta uma estimativa numérica. O método não foi validado para essas situações. <a href="/auditoria">Veja os limites e as fontes</a>.</p>}
+        {r.tipo === 'invalido' && <p className="resultado-pendente">{usaDatas ? (nascimento && dataParto ? 'Confira as datas. Mostramos apenas a idade em anos completos na data prevista do parto.' : 'Preencha as duas datas para consultar uma linha publicada da tabela.') : idadeTexto === '' ? `Para visualizar a tabela, informe: ${rotuloIdade.toLowerCase()}.` : 'Digite uma idade inteira entre 21 e 45 anos. Não interpolamos valores.'}</p>}
         {r.tipo === 'gemeos' && (
           <p className="aviso">As tabelas usadas valem para gestação única. Gestações de gêmeos têm valores próprios, que ainda não estão nesta calculadora.</p>
         )}
@@ -176,7 +180,7 @@ export function Calculadora({ tabelas }: Props) {
                 grade.current, { contexto, conferido: tabela.conferido, n: r.n, fonte: r.fonte,
                   fonteUrl: tabela.fonteUrl, interpolado: r.interpolado, textos })}><IconeCampo tipo="baixar" /> Baixar imagem <span aria-hidden="true">PNG</span></button>
             </header>
-            <div className="resultado-referencia"><IconeCampo tipo="calendario" /><p><strong>{contexto}.</strong></p></div>
+            <div className="resultado-referencia"><IconeCampo tipo="calendario" /><p><strong>{contexto}.</strong> Valor correspondente a uma idade inteira publicada na tabela.</p></div>
             <div className="resultado-corpo">
               <div className="resultado-metricas">
                 <div className="metrica-principal"><p className="metrica-rotulo"><span className="metrica-ponto" aria-hidden="true" /> Chance estimada de {textos.trissomia}</p><p className="metrica-numero">{umEmN(r.n)}</p><p className="metrica-percentual"><strong>{porcentagem(r.pct)}</strong><span>dos nascimentos, segundo a tabela</span></p><p className="metrica-explicacao">Em média, cerca de 1 nascimento com {textos.trissomia} a cada {Math.round(r.n).toLocaleString('pt-BR')} nascimentos com essa idade de referência.</p></div>
@@ -185,13 +189,13 @@ export function Calculadora({ tabelas }: Props) {
               </div>
               <div className="resultado-visual"><div className="visual-cabecalho"><h3>Em 1.000 nascimentos</h3><span className="visual-escala"><i aria-hidden="true" /> 1 ponto = 1 bebê</span></div><GradeMilBebes ref={grade} casos={casosEmMil(r.n)} idadeTexto={`${idadeExibida} anos`} contexto={contexto} textos={textos} /></div>
             </div>
-            <div className="resultado-leitura"><span className="leitura-icone"><IconeCampo tipo="livro" /></span><div><h3>Como ler essa estimativa</h3><p>Estimativa populacional para {textos.sindrome} ({textos.trissomia}), baseada apenas na idade. Não é resultado de exame nem probabilidade de engravidar. Isso não prevê o resultado de uma gestação específica.</p>{ovulo === 'doado' && <p>Na FIV, usamos a idade na coleta como aproximação; a tabela publicada considera a idade na data prevista do parto. Esse ajuste não foi validado clinicamente e não incorpora resultados de exames do embrião ou da gestação.</p>}</div></div>
-            <footer className="resultado-fontes"><p><span>FONTE INFORMADA NA TABELA</span><a href={tabela.fonteUrl} rel="noopener">{r.fonte}<span aria-hidden="true"> ↗</span></a>{r.interpolado && <small>Valor interpolado matematicamente entre idades vizinhas; não é um valor publicado na tabela.</small>}</p><span className={`resultado-status${tabela.conferido ? ' resultado-conferido' : ''}`}><i aria-hidden="true" />{tabela.conferido ? 'Tabela conferida com fonte institucional' : 'Conferência da fonte pendente'}</span></footer>
+            <div className="resultado-leitura"><span className="leitura-icone"><IconeCampo tipo="livro" /></span><div><h3>Como ler essa estimativa</h3><p>Estimativa populacional para {textos.sindrome} ({textos.trissomia}), baseada apenas na idade. Não é resultado de exame nem probabilidade de engravidar. Isso não prevê o resultado de uma gestação específica.</p></div></div>
+            <footer className="resultado-fontes"><p><span>FONTE INFORMADA NA TABELA</span><a href={tabela.fonteUrl} rel="noopener">{r.fonte}<span aria-hidden="true"> ↗</span></a><small><a href="/auditoria">Consulte a auditoria e as limitações</a>.</small></p><span className={`resultado-status${tabela.conferido ? ' resultado-conferido' : ''}`}><i aria-hidden="true" />{tabela.conferido ? 'Tabela conferida com fonte institucional' : 'Conferência da fonte pendente'}</span></footer>
           </article>
         )}
       </section>
 
-      {bebes === 1 && <CurvaRisco tabela={tabela} idade={r.tipo === 'ok' ? idade : undefined} referenciaIdade={referenciaIdade} />}
+      {bebes === 1 && ovulo === 'proprio' && <CurvaRisco tabela={tabela} idade={r.tipo === 'ok' ? idade : undefined} referenciaIdade={referenciaIdade} />}
       <AvisoEstimativa sindrome={textos.sindrome} />
       <p>
         <strong>E a idade do pai?</strong> O efeito da idade paterna sobre trissomias é pequeno. O

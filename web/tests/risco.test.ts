@@ -31,19 +31,18 @@ describe('risco T21', () => {
     expect(r.prob).toBeCloseTo(1 / n, 10);
   });
 
-  test('interpola em log entre idades vizinhas', () => {
-    const r = risco(tabela, { idade: 35.5 });
-    if (r.tipo !== 'ok') throw new Error('esperado ok');
-    expect(r.interpolado).toBe(true);
-    expect(r.n).toBeCloseTo(Math.sqrt(403 * 308), 6);
+  test('idade fracionária não produz número nem interpolação', () => {
+    expect(risco(tabela, { idade: 35.5 })).toEqual({ tipo: 'invalido' });
+    expect(risco(tabela, { idade: 40.01 })).toEqual({ tipo: 'invalido' });
   });
 
-  test('risco cresce de forma monotônica com a idade', () => {
+  test('valores publicados são monotônicos nas idades inteiras', () => {
     let anterior = 0;
-    for (let idade = 21; idade <= 45; idade += 0.1) {
+    for (let idade = 21; idade <= 45; idade++) {
       const r = risco(tabela, { idade });
       if (r.tipo !== 'ok') throw new Error(`esperado ok em ${idade}`);
       expect(r.pct).toBeGreaterThanOrEqual(anterior);
+      expect(r.interpolado).toBe(false);
       anterior = r.pct;
     }
   });

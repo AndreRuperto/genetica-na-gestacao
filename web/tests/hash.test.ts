@@ -12,9 +12,9 @@ test('gera hash só com idade inteira', () => {
   expect(hashDaIdade(Number.NaN)).toBe('');
 });
 
-test('links preservam FIV e gestação múltipla e mantêm os links antigos', () => {
-  const hash = hashDaIdade(25, 'doado', 2);
-  expect(lerConfiguracaoDoHash(hash)).toEqual({ idade: 25, ovulo: 'doado', bebes: 2, condicao: 't21' });
+test('não gera links com estimativas numéricas para FIV; lê links legados de forma segura', () => {
+  expect(hashDaIdade(25, 'doado', 2)).toBe('');
+  expect(lerConfiguracaoDoHash('#idade=25&ovulo=doado')).toEqual({ idade: 25, ovulo: 'doado', bebes: 1, condicao: 't21' });
   expect(lerConfiguracaoDoHash('#idade=40')).toEqual({ idade: 40, ovulo: 'proprio', bebes: 1, condicao: 't21' });
 });
 

@@ -36,9 +36,9 @@ test('datas consultam apenas idades em anos completos', async ({ page }) => {
   await page.locator('astro-island:not([ssr])').waitFor();
   await page.getByRole('checkbox', { name: /calcular idade pelas datas/i }).check();
   await page.getByLabel(/data de nascimento da mãe/i).fill('1991-10-01');
-  await page.getByLabel(/^data prevista do parto/i).fill('2026-09-30');
+  await page.locator('.campos-datas input[type="date"]').nth(1).fill('2026-09-30');
   await expect(page.getByRole('region', { name: 'Resultado' }).getByText('1 em 513')).toBeVisible();
-  await page.getByLabel(/^data prevista do parto/i).fill('2026-10-01');
+  await page.locator('.campos-datas input[type="date"]').nth(1).fill('2026-10-01');
   await expect(page.getByRole('region', { name: 'Resultado' }).getByText('1 em 403')).toBeVisible();
 });
 

@@ -33,16 +33,11 @@ export function risco(tabela: Tabela, { idade, bebes = 1 }: Entrada): Resultado 
   const [min, max] = faixaDaTabela(tabela);
   if (idade < min || idade > max) return { tipo: 'fora-da-tabela', min, max };
 
-  const baixo = Math.floor(idade);
-  const nBaixo = tabela.valores[String(baixo)];
-  const fracao = idade - baixo;
-
-  let n = nBaixo;
-  if (fracao > 0) {
-    // A curva é aproximadamente exponencial: interpola no logaritmo.
-    const nAlto = tabela.valores[String(baixo + 1)];
-    n = Math.exp(Math.log(nBaixo) + fracao * (Math.log(nAlto) - Math.log(nBaixo)));
-  }
+  // Somente idades inteiras presentes na tabela institucional são retornadas.
+  // Não inferir risco para idades fracionárias: a fonte não publica esses números.
+  if (!Number.isInteger(idade)) return { tipo: 'invalido' };
+  const n = tabela.valores[String(idade)];
+  if (n === undefined) return { tipo: 'invalido' };
 
   const pct = 100 / n;
   return {
@@ -52,7 +47,7 @@ export function risco(tabela: Tabela, { idade, bebes = 1 }: Entrada): Resultado 
     pct,
     complementoPct: 100 - pct,
     fonte: tabela.fonte,
-    interpolado: fracao > 0,
+    interpolado: false,
   };
 }
 

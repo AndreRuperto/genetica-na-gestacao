@@ -21,6 +21,7 @@ export function lerIdadeDoHash(hash: string): number | null {
 }
 
 export function hashDaIdade(idade: number, ovulo: 'proprio' | 'doado' = 'proprio', bebes = 1, condicao: Condicao = 't21'): string {
-  if (!Number.isInteger(idade) || idade < 18 || idade > 50) return '';
+  // Não gerar links com números para cenários FIV sem modelo validado.
+  if (ovulo === 'doado' || !Number.isInteger(idade) || idade < 18 || idade > 50) return '';
   return `#idade=${idade}${ovulo === 'doado' ? '&ovulo=doado' : ''}${bebes > 1 ? '&bebes=2' : ''}${condicao !== 't21' ? `&condicao=${condicao}` : ''}`;
 }

@@ -60,8 +60,8 @@ export function Calculadora({ tabelas }: Props) {
   const usaDatas = pelasDatas && ovulo === 'proprio';
   const idade = usaDatas ? idadePorDatas(nascimento, dataParto) : idadeTexto === '' ? Number.NaN : Number(idadeTexto);
   // Sem modelo específico para FIV/doação de óvulos: não exibir números.
-  const r = ovulo === 'doado' ? { tipo: 'sem-modelo-fiv' as const }
-    : bebes > 1 ? { tipo: 'gemeos' as const }
+  const r = bebes > 1 ? { tipo: 'gemeos' as const }
+    : ovulo === 'doado' ? { tipo: 'sem-modelo-fiv' as const }
     : risco(tabela, { idade, bebes });
   const [idadeMinTabela, idadeMaxTabela] = faixaDaTabela(tabela);
 

@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 
 const paginas = ['/', '/calculadora', '/calculadora#idade=40', '/sindromes', '/sindromes/down',
-  '/mito-ou-verdade', '/painel-genetico', '/metodologia'];
+  '/mito-ou-verdade', '/painel-genetico', '/metodologia', '/auditoria'];
 
 for (const p of paginas) {
   test(`sem violações de acessibilidade em ${p}`, async ({ page }) => {

@@ -41,11 +41,14 @@ test('gêmeos → aviso, sem número', async () => {
   expect(resultado().getByText(/gestação única/i)).toBeInTheDocument();
 });
 
-test('óvulo doado troca o rótulo e usa a idade da coleta', async () => {
+test('FIV não mostra estimativa nem solicita idade da doadora', async () => {
   render(<Calculadora tabelas={[tabela]} />);
-  await userEvent.click(screen.getByLabelText(/doado/i));
-  await userEvent.type(screen.getByLabelText(/idade na data da coleta do óvulo/i), '25');
-  expect(resultado().getByText('1 em 1.362')).toBeInTheDocument();
+  await userEvent.click(screen.getByRole('radio', { name: /FIV: próprio ou doado/i }));
+  expect(screen.queryByRole('spinbutton')).toBeNull();
+  expect(resultado().getByText(/não apresenta uma estimativa numérica/i)).toBeInTheDocument();
+  expect(resultado().queryByText(/^1 em /)).toBeNull();
+  expect(screen.queryByRole('img', { name: /Curva do risco/ })).toBeNull();
+  expect(location.hash).toBe('');
 });
 
 test('fora da tabela → aviso, sem número', async () => {
@@ -74,15 +77,16 @@ test('controles de idade atualizam a estimativa e respeitam os limites', async (
   expect(mais).toBeDisabled();
 });
 
-test('alternar para datas calcula a idade e preserva a idade digitada ao voltar', async () => {
+test('datas usam anos completos e preservam idade digitada ao voltar', async () => {
   render(<Calculadora tabelas={[tabela]} />);
   await userEvent.type(screen.getByLabelText(/idade da mãe na data prevista do parto/i), '40');
-  const alternar = screen.getByRole('checkbox', { name: /calcular pelas datas/i });
+  const alternar = screen.getByRole('checkbox', { name: /calcular idade pelas datas/i });
   await userEvent.click(alternar);
   expect(screen.queryByRole('spinbutton')).toBeNull();
   fireEvent.change(screen.getByLabelText(/data de nascimento da mãe/i), { target: { value: '1990-03-10' } });
   fireEvent.change(screen.getByLabelText(/^data prevista do parto/i), { target: { value: '2026-09-08' } });
-  expect(resultado().getByText(/valor interpolado/i)).toBeInTheDocument();
+  expect(resultado().getByText('1 em 308')).toBeInTheDocument();
+  expect(resultado().getByText(/valor correspondente a uma idade inteira/i)).toBeInTheDocument();
   expect(location.hash).toBe('');
   await userEvent.click(alternar);
   expect(screen.getByRole('spinbutton')).toHaveValue(40);
@@ -90,27 +94,27 @@ test('alternar para datas calcula a idade e preserva a idade digitada ao voltar'
   expect(location.hash).toBe('#idade=40');
 });
 
-test('trocar a origem não reaproveita idade da gestante como idade na coleta', async () => {
+test('trocar para FIV remove a idade e nunca reaproveita estimativa', async () => {
   render(<Calculadora tabelas={[tabela]} />);
   await userEvent.type(screen.getByRole('spinbutton'), '45');
   expect(resultado().getByText('1 em 38')).toBeInTheDocument();
-  await userEvent.click(screen.getByRole('radio', { name: /doado/i }));
+  await userEvent.click(screen.getByRole('radio', { name: /FIV: próprio ou doado/i }));
+  expect(screen.queryByRole('spinbutton')).toBeNull();
+  expect(resultado().queryByText('1 em 38')).toBeNull();
+  expect(location.hash).toBe('');
+  await userEvent.click(screen.getByRole('radio', { name: /Próprio, sem FIV/i }));
   expect(screen.getByRole('spinbutton')).toHaveValue(null);
   expect(resultado().queryByText('1 em 38')).toBeNull();
-  await userEvent.type(screen.getByRole('spinbutton'), '25');
-  expect(resultado().getByText('1 em 1.362')).toBeInTheDocument();
-  expect(resultado().getByText(/^Idade de quem forneceu o óvulo na coleta: 25 anos\.$/, { selector: 'strong' })).toBeInTheDocument();
-  expect(screen.getByRole('img', { name: /1 em cada 1.000/ })).toHaveAccessibleName(/coleta: 25 anos/);
-  expect(location.hash).toBe('#idade=25&ovulo=doado');
 });
 
-test('abrir link FIV restaura a origem e não apresenta idade materna no gráfico', () => {
+test('link legado FIV restaura opção, sem número nem gráfico', () => {
   history.replaceState(null, '', '/calculadora#idade=45&ovulo=doado');
   render(<Calculadora tabelas={[tabela]} />);
-  expect(screen.getByRole('radio', { name: /doado/i })).toBeChecked();
-  expect(resultado().getByText('1 em 38')).toBeInTheDocument();
-  expect(screen.getByRole('img', { name: /26 em cada 1.000/ })).toHaveAccessibleName(/974.*coleta: 45 anos/);
-  expect(screen.getByRole('img', { name: /Curva do risco/ })).not.toHaveAccessibleName(/idade materna/);
+  expect(screen.getByRole('radio', { name: /FIV: próprio ou doado/i })).toBeChecked();
+  expect(screen.queryByRole('spinbutton')).toBeNull();
+  expect(resultado().getByText(/não apresenta uma estimativa numérica/i)).toBeInTheDocument();
+  expect(resultado().queryByText('1 em 38')).toBeNull();
+  expect(screen.queryByRole('img', { name: /Curva do risco/ })).toBeNull();
 });
 
 test('link de gêmeos não volta a mostrar estimativa para gestação única', () => {
@@ -139,14 +143,24 @@ test('a calculadora informa qual fonte conferiu a tabela T21', () => {
   expect(screen.getByRole('note')).toHaveTextContent(/Não é diagnóstico/);
 });
 
-test('trocar só o fragmento do link atualiza origem e sai do modo por datas', async () => {
+test('fragmento FIV sai do modo por datas e bloqueia números', async () => {
   render(<Calculadora tabelas={[tabela]} />);
-  await userEvent.click(screen.getByRole('checkbox', { name: /calcular pelas datas/i }));
+  await userEvent.click(screen.getByRole('checkbox', { name: /calcular idade pelas datas/i }));
   history.replaceState(null, '', '/calculadora#idade=25&ovulo=doado');
   fireEvent(window, new Event('hashchange'));
-  expect(screen.getByRole('radio', { name: /doado/i })).toBeChecked();
-  expect(screen.getByRole('spinbutton')).toHaveValue(25);
-  expect(resultado().getByText('1 em 1.362')).toBeInTheDocument();
+  expect(screen.getByRole('radio', { name: /FIV: próprio ou doado/i })).toBeChecked();
+  expect(screen.queryByRole('spinbutton')).toBeNull();
+  expect(resultado().queryByText('1 em 1.362')).toBeNull();
+});
+
+test('data imediatamente anterior ao aniversário usa a idade anterior', async () => {
+  render(<Calculadora tabelas={[tabela]} />);
+  await userEvent.click(screen.getByRole('checkbox', { name: /calcular idade pelas datas/i }));
+  fireEvent.change(screen.getByLabelText(/data de nascimento da mãe/i), { target: { value: '1991-10-01' } });
+  fireEvent.change(screen.getByLabelText(/^data prevista do parto/i), { target: { value: '2026-09-30' } });
+  expect(resultado().getByText('1 em 513')).toBeInTheDocument();
+  fireEvent.change(screen.getByLabelText(/^data prevista do parto/i), { target: { value: '2026-10-01' } });
+  expect(resultado().getByText('1 em 403')).toBeInTheDocument();
 });
 
 // Tabela fictícia, só para exercitar a troca de condição; não são valores reais de T18.

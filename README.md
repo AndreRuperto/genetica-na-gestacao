@@ -176,7 +176,7 @@ Issues e pull requests são bem-vindos. Descreva o problema ou a melhoria, mante
 
 Alterações em conteúdo de saúde devem trazer referências verificáveis. Não remova os avisos de limite ou de conferência para fazer uma validação passar. Decisões anteriores estão documentadas em [`docs/plans/`](docs/plans/).
 
-Próximas etapas: obter **revisão clínica independente** dos textos e visualizações, usando o [roteiro de revisão](docs/revisao-clinica-checklist.md). A [auditoria pública](/auditoria) informa o escopo conferido e as pendências. Qualquer retorno a estimativas de FIV, idades fracionárias ou outras condições exige fonte adequada, justificativa metodológica e revisão especializada.
+Próximas etapas: obter **revisão clínica independente** dos textos e visualizações, usando o [roteiro de revisão](docs/revisao-clinica-checklist.md). A [auditoria pública](https://genetica-na-gestacao.up.railway.app/auditoria) informa o escopo conferido e as pendências. Qualquer retorno a estimativas de FIV, idades fracionárias ou outras condições exige fonte adequada, justificativa metodológica e revisão especializada.
 
 ## Licença
 

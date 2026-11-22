@@ -1,0 +1,98 @@
+---
+import Base from '../layouts/Base.astro';
+import Icone from '../components/Icone.astro';
+import '../styles/paginas-referencia.css';
+import t21 from '@dados/risco/t21.json';
+import { tabelaSchema } from '../lib/tabela';
+import { umEmN, porcentagem } from '../lib/formatar';
+
+const tabela = tabelaSchema.parse(t21);
+const registro = tabela.verificacao;
+const linhas = Object.entries(tabela.valores).sort(([a], [b]) => Number(a) - Number(b));
+const formatarData = (dia: string) =>
+  new Date(`${dia}T12:00:00Z`).toLocaleDateString('pt-BR', { timeZone: 'UTC' });
+---
+<Base titulo="Auditoria dos dados" descricao="Confira origem, versão, valores e limites da tabela educativa de trissomia 21." amplo>
+  <div class="pagina-referencia pagina-metodologia">
+    <header class="referencia-abertura">
+      <div>
+        <p class="sobretitulo"><Icone nome="livro" tamanho={18} /> TRANSPARÊNCIA DOS DADOS</p>
+        <h1>Os números têm<br /><span>origem verificável.</span></h1>
+        <p>Veja o que foi conferido, como cada número é apresentado e o que ainda depende de avaliação especializada.</p>
+      </div>
+      <aside class="referencia-resumo" aria-label="Situação da auditoria">
+        <span class="referencia-resumo__icone"><Icone nome="livro" tamanho={26} /></span>
+        <strong>{linhas.length}<span>valores transcritos e conferidos</span></strong>
+        <p>A conferência dos dados não é uma validação clínica da calculadora.</p>
+      </aside>
+    </header>
+    <div class="metodologia-layout">
+      <nav class="metodologia-indice" aria-label="Nesta página">
+        <p>NESTA PÁGINA</p>
+        <ol role="list">
+          <li><a href="#status"><span>01</span>O que foi conferido</a></li>
+          <li><a href="#fontes"><span>02</span>Fontes</a></li>
+          <li><a href="#valores"><span>03</span>Tabela integral</a></li>
+          <li><a href="#limites"><span>04</span>Limites</a></li>
+          <li><a href="#revisao"><span>05</span>Revisão externa</a></li>
+        </ol>
+      </nav>
+      <div class="metodologia-corpo">
+        <section class="metodologia-secao" id="status" aria-labelledby="auditoria-status">
+          <p class="sobretitulo">01 / Situação</p>
+          <h2 id="auditoria-status">Dados conferidos, uso clínico não validado</h2>
+          <p><strong>Transcrição da fonte:</strong> {tabela.conferido ? 'conferida' : 'em revisão'}.
+            {registro && <> {registro.totalLinhas} linhas, conferidas em <time datetime={registro.conferidoEm}>{formatarData(registro.conferidoEm)}</time>.</>}
+          </p>
+          <p><strong>Revisão clínica independente:</strong> pendente. Os resultados não fazem diagnóstico, não predizem uma gestação específica e não substituem acompanhamento profissional.</p>
+          <p>O código da tabela informa que o recorte é a trissomia 21 ao nascimento, em gestação única, para idades inteiras de 21 a 45 anos na data prevista do parto.</p>
+        </section>
+
+        <section class="metodologia-secao" id="fontes" aria-labelledby="auditoria-fontes">
+          <p class="sobretitulo">02 / Origem</p>
+          <h2 id="auditoria-fontes">De onde vêm os valores</h2>
+          <ul>
+            <li><a href={registro?.fonteUrl || tabela.fonteUrl}>{registro?.fonte || tabela.fonte}</a>: tabela institucional usada para comparar todas as 25 idades inteiras.</li>
+            <li><a href={tabela.fonteUrl}>{tabela.fonte}</a>: estudo científico citado pela instituição. A conferência numérica foi feita com a tabela institucional, não por extração independente do artigo.</li>
+            <li><a href="https://github.com/AndreRuperto/genetica-na-gestacao/blob/main/data/risco/CONFERENCIA-T21-2026-11-21.md">Registro técnico da auditoria</a> e <a href="https://github.com/AndreRuperto/genetica-na-gestacao/blob/main/web/tests/referencia-t21-pso.test.ts">teste automatizado de regressão</a>.</li>
+          </ul>
+          <p>Os valores deste site são históricos e populacionais. A conferência comprova a correspondência com a referência indicada, não que a tabela sirva para avaliar uma gestação individual.</p>
+        </section>
+
+        <section class="metodologia-secao" id="valores" aria-labelledby="auditoria-valores">
+          <p class="sobretitulo">03 / Dados abertos</p>
+          <h2 id="auditoria-valores">Todas as 25 idades</h2>
+          <p>A porcentagem é obtida por <strong>100 ÷ N</strong>, sendo N o denominador publicado. A representação de 1.000 pontos arredonda a contagem; não são casos observados.</p>
+          <div class="metodologia-tabela">
+            <table>
+              <caption>Trissomia 21 ao nascimento · idade inteira na data prevista do parto · gestação única</caption>
+              <thead><tr><th scope="col">Idade</th><th scope="col">Chance publicada</th><th scope="col">Porcentagem calculada</th></tr></thead>
+              <tbody>{linhas.map(([idade, n]) => <tr><th scope="row">{idade} anos</th><td>{umEmN(n)}</td><td>{porcentagem(100 / n)}</td></tr>)}</tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="metodologia-secao" id="limites" aria-labelledby="auditoria-limites">
+          <p class="sobretitulo">04 / Limitações</p>
+          <h2 id="auditoria-limites">O que a aplicação não calcula</h2>
+          <ul>
+            <li><strong>Idades fracionárias:</strong> não interpolamos um novo denominador. Se forem usadas datas, calculamos apenas a idade em anos completos na data prevista do parto.</li>
+            <li><strong>FIV e óvulos doados ou congelados:</strong> o site mostra informações educativas, sem gerar resultado numérico. A tabela institucional cita idade da pessoa doadora no parto, mas não valida todos os cenários de reprodução assistida.</li>
+            <li><strong>Gestações múltiplas:</strong> não apresentamos números para gêmeos.</li>
+            <li><strong>Condições clínicas e exames:</strong> não são incluídos nem interpretados; estimativa ao nascimento não é o mesmo que resultado de rastreamento ou teste diagnóstico.</li>
+            <li><strong>Faixas etárias externas:</strong> nenhuma extrapolação fora dos 21–45 anos publicados.</li>
+          </ul>
+          <p>Para contexto sobre opções de rastreamento e diagnóstico, consulte as <a href="https://www.acog.org/clinical/clinical-guidance/practice-advisory/articles/2026/01/screening-for-fetal-chromosomal-abnormalities">orientações do ACOG</a> e converse com profissionais de saúde.</p>
+        </section>
+
+        <section class="metodologia-secao" id="revisao" aria-labelledby="auditoria-revisao">
+          <p class="sobretitulo">05 / Revisão externa</p>
+          <h2 id="auditoria-revisao">Avaliação especializada pendente</h2>
+          <p>Existe um <a href="https://github.com/AndreRuperto/genetica-na-gestacao/blob/main/docs/revisao-clinica-checklist.md">roteiro público de revisão</a> para um profissional de genética, aconselhamento genético ou medicina fetal avaliar os textos, os limites e a forma de apresentar os dados.</p>
+          <p><strong>Não há aprovação ou validação clínica externa registrada.</strong> Nenhuma revisão será considerada concluída sem data, escopo, responsável e registro das correções necessárias.</p>
+          <p><a href="/metodologia">Ler metodologia completa</a> · <a href="/calculadora">Explorar tabela por idade</a></p>
+        </section>
+      </div>
+    </div>
+  </div>
+</Base>
